@@ -1,0 +1,23 @@
+postgres:
+  url: postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable
+www:
+  port: 8080
+jwt:
+  secret: privet
+  access_token_duration: 1h
+  refresh_token_duration: 24h
+  issuer: vkr-backend
+log:
+  out: console
+redis:
+  addr: localhost:6379
+  password: redis
+  db: 0
+telegram:
+  bot_token: 7633456615:AAFwGeqrnhiKftXijFiJNdFkn6x9v6jeeQs
+influxdb:
+  url: http://localhost:8086
+  token: dev-token-for-local-development-only
+  org: health-analytics
+  bucket: health-data
+dev: true

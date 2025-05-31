@@ -1,5 +1,4 @@
-
-version: '3.3'
+version: "3.3"
 
 services:
   postgres:
@@ -16,6 +15,8 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
+    networks:
+      - vkr-network
   redis:
     image: redis:7-alpine
     container_name: redis
@@ -27,7 +28,60 @@ services:
     command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     volumes:
       - redis-vol:/data
+    networks:
+      - vkr-network
+
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: influxdb
+    restart: always
+    ports:
+      - "8086:8086"
+    environment:
+      # Автоматическая настройка при первом запуске
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: admin
+      DOCKER_INFLUXDB_INIT_PASSWORD: password123
+      DOCKER_INFLUXDB_INIT_ORG: health-analytics
+      DOCKER_INFLUXDB_INIT_BUCKET: health-data
+      DOCKER_INFLUXDB_INIT_RETENTION: 8760h
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: dev-token-for-local-development-only
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+      - influxdb-config:/etc/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - vkr-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - vkr-network
+
 volumes:
   psql-vol:
   redis-vol:
+  influxdb-data:
+  influxdb-config:
+  pgadmin-data:
 
+networks:
+  vkr-network:
+    driver: bridge

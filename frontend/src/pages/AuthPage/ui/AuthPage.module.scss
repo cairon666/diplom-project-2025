@@ -1,0 +1,12 @@
+.auth-layout {
+    display: grid;
+    grid-template-columns: 5fr 3fr;
+    height: 100vh;
+
+    &__form {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

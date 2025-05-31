@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "lib": ["DOM", "ES2020"],
+    "jsx": "react-jsx",
+    "target": "ES2020",
+    "noEmit": false,
+    "skipLibCheck": true,
+    "useDefineForClassFields": true,
+    "rootDir": "./src",
+
+    /* modules */
+    "module": "ESNext",
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "bundler",
+
+    /* type checking */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "baseUrl": ".",
+    "paths": {
+      "ui/*": ["./src/shared/components/ui/*"],
+      "src/*": ["./src/*"],
+      "@/*": ["./src/*"],
+    },
+    "plugins": [{ "name": "typescript-plugin-css-modules" }]
+  },
+  "include": ["src"]
+}
