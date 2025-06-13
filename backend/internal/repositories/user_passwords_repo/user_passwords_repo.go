@@ -28,6 +28,7 @@ func (u *UserPasswordsRepo) GetUserPasswordByUserId(ctx context.Context, userId 
 		if errors.Is(err, pgx.ErrNoRows) {
 			return models.UserPassword{}, apperrors.NotFound()
 		}
+
 		return models.UserPassword{}, err
 	}
 
@@ -44,13 +45,14 @@ func (u *UserPasswordsRepo) CreateUserPassword(ctx context.Context, userPassword
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
-			switch {
-			case pgErr.ConstraintName == "USER_PASSWORDS_USER_ID_UNIQUE":
+			switch pgErr.ConstraintName {
+			case "USER_PASSWORDS_USER_ID_UNIQUE":
 				return apperrors.AlreadyExists()
 			default:
 				return err
 			}
 		}
+
 		return err
 	}
 

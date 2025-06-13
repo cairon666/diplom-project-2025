@@ -177,6 +177,7 @@ func NewPgxPool(lc fx.Lifecycle, conf *config.Config) (postgres.PostgresClient, 
 			if pgClient != nil {
 				pgClient.Close()
 			}
+
 			return nil
 		},
 	})
@@ -203,6 +204,7 @@ func NewRedisClient(lc fx.Lifecycle, conf *config.Config) (*redis.Client, error)
 			if redisClient != nil {
 				redisClient.Close()
 			}
+
 			return nil
 		},
 	})
@@ -219,6 +221,7 @@ func NewInfluxDBClient(lc fx.Lifecycle, conf *config.Config) (influxdb.InfluxDBC
 			if influxClient != nil {
 				influxClient.Close()
 			}
+
 			return nil
 		},
 	})

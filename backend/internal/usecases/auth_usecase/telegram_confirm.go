@@ -48,12 +48,14 @@ func (authUsecase *AuthUsecase) TelegramConfirm(ctx context.Context, reqDTO Comp
 		}
 
 		authUsecase.logger.Error("failed to get user id by temp id", logger.Error(err))
+
 		return CompleteRegisterResponse{}, apperrors.InternalError()
 	}
 
 	user, err := authUsecase.userService.GetUserById(ctx, userId)
 	if err != nil {
 		authUsecase.logger.Error("failed to get user by id", logger.Error(err))
+
 		return CompleteRegisterResponse{}, apperrors.InternalError()
 	}
 
@@ -68,6 +70,7 @@ func (authUsecase *AuthUsecase) TelegramConfirm(ctx context.Context, reqDTO Comp
 		}
 
 		authUsecase.logger.Error("failed to update user", logger.Error(err))
+
 		return CompleteRegisterResponse{}, apperrors.InternalError()
 	}
 
@@ -77,12 +80,14 @@ func (authUsecase *AuthUsecase) TelegramConfirm(ctx context.Context, reqDTO Comp
 
 	if err := authUsecase.roleService.AssignRoleToUser(ctx, userId, models.RoleUser); err != nil {
 		authUsecase.logger.Error("failed to assign role to user", logger.Error(err))
+
 		return CompleteRegisterResponse{}, apperrors.InternalError()
 	}
 
 	accessToken, refreshToken, err := authUsecase.authService.GenerateJWT(ctx, user)
 	if err != nil {
 		authUsecase.logger.Error("failed to generate jwt", logger.Error(err))
+
 		return CompleteRegisterResponse{}, apperrors.InternalError()
 	}
 

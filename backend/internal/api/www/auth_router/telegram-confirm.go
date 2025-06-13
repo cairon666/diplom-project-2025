@@ -25,6 +25,7 @@ func (r *AuthRouter) TelegramConfirmRoute(c *gin.Context) {
 	var req TelegramConfirmRequest
 	if err := c.Bind(&req); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -33,6 +34,7 @@ func (r *AuthRouter) TelegramConfirmRoute(c *gin.Context) {
 	resp, err := r.authUsecase.TelegramConfirm(c, reqDTO)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

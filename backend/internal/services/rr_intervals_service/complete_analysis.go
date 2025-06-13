@@ -10,7 +10,7 @@ import (
 )
 
 // GetCompleteAnalysis выполняет полный комплексный анализ RR интервалов за один оптимизированный запрос
-// Этот метод заменяет множественные вызовы отдельных методов анализа
+// Этот метод заменяет множественные вызовы отдельных методов анализа.
 func (s *RRIntervalsService) GetCompleteAnalysis(ctx context.Context, userID uuid.UUID, from, to time.Time, options *models.CompleteAnalysisOptions) (*models.CompleteAnalysisData, error) {
 	// Устанавливаем дефолтные значения для опций
 	if options == nil {
@@ -39,20 +39,20 @@ func (s *RRIntervalsService) GetCompleteAnalysis(ctx context.Context, userID uui
 	return analysisData, nil
 }
 
-// getDefaultAnalysisOptions возвращает дефолтные опции для анализа
+// getDefaultAnalysisOptions возвращает дефолтные опции для анализа.
 func (s *RRIntervalsService) getDefaultAnalysisOptions() *models.CompleteAnalysisOptions {
 	return &models.CompleteAnalysisOptions{
 		AggregationIntervalMinutes:    5,
-		TrendWindowSizeMinutes:       15,
-		HistogramBinsCount:           25,
-		DiffHistogramBinsCount:       20,
+		TrendWindowSizeMinutes:        15,
+		HistogramBinsCount:            25,
+		DiffHistogramBinsCount:        20,
 		EnableFrequencyDomainAnalysis: false, // Пока отключено для производительности
-		IncludeRawData:               true,
-		MaxDataPoints:                10000,
+		IncludeRawData:                true,
+		MaxDataPoints:                 10000,
 	}
 }
 
-// validateAndSetDefaults проверяет и устанавливает дефолтные значения для опций
+// validateAndSetDefaults проверяет и устанавливает дефолтные значения для опций.
 func (s *RRIntervalsService) validateAndSetDefaults(options *models.CompleteAnalysisOptions) {
 	if options.AggregationIntervalMinutes <= 0 {
 		options.AggregationIntervalMinutes = 5
@@ -71,7 +71,7 @@ func (s *RRIntervalsService) validateAndSetDefaults(options *models.CompleteAnal
 	}
 }
 
-// enrichAnalysisData дополняет базовые данные расширенными вычислениями
+// enrichAnalysisData дополняет базовые данные расширенными вычислениями.
 func (s *RRIntervalsService) enrichAnalysisData(ctx context.Context, analysisData *models.CompleteAnalysisData, options *models.CompleteAnalysisOptions) error {
 	// Если у нас есть сырые данные, вычисляем дополнительные метрики
 	if len(analysisData.RawValues) > 0 {
@@ -99,11 +99,12 @@ func (s *RRIntervalsService) enrichAnalysisData(ctx context.Context, analysisDat
 	return nil
 }
 
-// calculateHRVMetricsFromRawData вычисляет HRV метрики из сырых данных
+// calculateHRVMetricsFromRawData вычисляет HRV метрики из сырых данных.
 func (s *RRIntervalsService) calculateHRVMetricsFromRawData(analysisData *models.CompleteAnalysisData, options *models.CompleteAnalysisOptions) error {
 	if len(analysisData.RawValues) < 10 {
 		// Недостаточно данных для HRV анализа
 		analysisData.HRVMetrics = &models.HRVMetrics{}
+
 		return nil
 	}
 
@@ -131,7 +132,7 @@ func (s *RRIntervalsService) calculateHRVMetricsFromRawData(analysisData *models
 	return nil
 }
 
-// calculateTrendAnalysisFromAggregated вычисляет анализ трендов из агрегированных данных
+// calculateTrendAnalysisFromAggregated вычисляет анализ трендов из агрегированных данных.
 func (s *RRIntervalsService) calculateTrendAnalysisFromAggregated(analysisData *models.CompleteAnalysisData, options *models.CompleteAnalysisOptions) error {
 	if len(analysisData.AggregatedData) < 3 {
 		// Недостаточно точек для анализа трендов
@@ -143,6 +144,7 @@ func (s *RRIntervalsService) calculateTrendAnalysisFromAggregated(analysisData *
 			Seasonality:   []float64{},
 			TrendStrength: 0,
 		}
+
 		return nil
 	}
 
@@ -184,7 +186,7 @@ func (s *RRIntervalsService) calculateTrendAnalysisFromAggregated(analysisData *
 	return nil
 }
 
-// calculateHistogramsFromRawData вычисляет гистограммы из сырых данных
+// calculateHistogramsFromRawData вычисляет гистограммы из сырых данных.
 func (s *RRIntervalsService) calculateHistogramsFromRawData(analysisData *models.CompleteAnalysisData, options *models.CompleteAnalysisOptions) error {
 	if len(analysisData.RawValues) == 0 {
 		analysisData.Histogram = &models.RRHistogramData{
@@ -199,6 +201,7 @@ func (s *RRIntervalsService) calculateHistogramsFromRawData(analysisData *models
 			BinWidth:   0,
 			Statistics: &models.DifferentialStatistics{},
 		}
+
 		return nil
 	}
 
@@ -242,7 +245,7 @@ func (s *RRIntervalsService) calculateHistogramsFromRawData(analysisData *models
 	return nil
 }
 
-// calculateScatterplotFromRawData вычисляет скаттерограмму из сырых данных
+// calculateScatterplotFromRawData вычисляет скаттерограмму из сырых данных.
 func (s *RRIntervalsService) calculateScatterplotFromRawData(analysisData *models.CompleteAnalysisData, options *models.CompleteAnalysisOptions) error {
 	if len(analysisData.RawValues) < 2 {
 		analysisData.Scatterplot = &models.ScatterplotData{
@@ -251,12 +254,13 @@ func (s *RRIntervalsService) calculateScatterplotFromRawData(analysisData *model
 			Statistics: &models.ScatterplotStatistics{},
 			Ellipse:    &models.PoincarePlotEllipse{},
 		}
+
 		return nil
 	}
 
 	// Создаем точки скаттерограммы
 	points := make([]models.ScatterplotPoint, len(analysisData.RawValues)-1)
-	for i := 0; i < len(analysisData.RawValues)-1; i++ {
+	for i := range len(analysisData.RawValues) - 1 {
 		points[i] = models.ScatterplotPoint{
 			RRn:  analysisData.RawValues[i],
 			RRn1: analysisData.RawValues[i+1],
@@ -316,6 +320,7 @@ func (s *RRIntervalsService) formatPeriod(from, to time.Time) string {
 	} else if duration < 7*24*time.Hour {
 		return "weekly"
 	}
+
 	return "long_term"
 }
 
@@ -323,5 +328,6 @@ func abs(x float64) float64 {
 	if x < 0 {
 		return -x
 	}
+
 	return x
-} 
+}

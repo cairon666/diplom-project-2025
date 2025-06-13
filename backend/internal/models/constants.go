@@ -1,6 +1,6 @@
 package models
 
-// TrendDirection представляет направление тренда
+// TrendDirection представляет направление тренда.
 type TrendDirection string
 
 const (
@@ -9,12 +9,12 @@ const (
 	TrendDirectionStable TrendDirection = "stable" // Стабильный тренд
 )
 
-// String возвращает строковое представление направления тренда
+// String возвращает строковое представление направления тренда.
 func (td TrendDirection) String() string {
 	return string(td)
 }
 
-// OverallTrend представляет общий тренд
+// OverallTrend представляет общий тренд.
 type OverallTrend string
 
 const (
@@ -23,7 +23,7 @@ const (
 	OverallTrendStable     OverallTrend = "stable"     // Стабильный тренд
 )
 
-// String возвращает строковое представление общего тренда
+// String возвращает строковое представление общего тренда.
 func (ot OverallTrend) String() string {
 	return string(ot)
 }

@@ -16,12 +16,14 @@ func (r *UserRouter) UpdateSettingEmail(c *gin.Context) {
 	var req UpdateSettingEmailRequest
 	if err := c.Bind(&req); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	dto := user_usecase.NewUpdateSettingEmailRequest(req.Email)
 	if err := r.userUsecase.UpdateSettingEmail(c.Request.Context(), dto); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

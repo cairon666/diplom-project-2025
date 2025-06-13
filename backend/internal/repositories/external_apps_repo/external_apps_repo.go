@@ -32,6 +32,7 @@ func (r *ExternalAppsRepo) Create(ctx context.Context, app models.ExternalApp) e
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -49,6 +50,7 @@ func (r *ExternalAppsRepo) GetByID(ctx context.Context, id uuid.UUID) (models.Ex
 	if err != nil {
 		return models.ExternalApp{}, err
 	}
+
 	return toModel(dbApp), nil
 }
 
@@ -57,6 +59,7 @@ func (r *ExternalAppsRepo) GetByAPIKeyHash(ctx context.Context, hash string) (mo
 	if err != nil {
 		return models.ExternalApp{}, err
 	}
+
 	return toModel(dbApp), nil
 }
 
@@ -66,12 +69,14 @@ func (r *ExternalAppsRepo) ListByOwner(ctx context.Context, ownerID uuid.UUID) (
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, apperrors.NotFound()
 		}
+
 		return nil, err
 	}
 	result := make([]models.ExternalApp, 0, len(dbApps))
 	for _, app := range dbApps {
 		result = append(result, toModel(app))
 	}
+
 	return result, nil
 }
 
@@ -82,7 +87,7 @@ func (r *ExternalAppsRepo) UpdateName(ctx context.Context, id uuid.UUID, newName
 	})
 }
 
-// Маппер из sqlc-структуры в модель
+// Маппер из sqlc-структуры в модель.
 func toModel(dbApp dbqueries.EXTERNALAPP) models.ExternalApp {
 	return models.ExternalApp{
 		ID:         dbApp.ID,

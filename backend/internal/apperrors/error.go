@@ -1,6 +1,6 @@
 package apperrors
 
-// AppError - основной интерфейс для всех ошибок приложения
+// AppError - основной интерфейс для всех ошибок приложения.
 type AppError interface {
 	error
 	Code() ErrorCode
@@ -11,7 +11,7 @@ type AppError interface {
 	WithFields(fields map[string]interface{}) AppError
 }
 
-// ErrorBuilder - интерфейс для создания ошибок
+// ErrorBuilder - интерфейс для создания ошибок.
 type ErrorBuilder interface {
 	Build() AppError
 	WithMessage(message string) ErrorBuilder

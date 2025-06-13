@@ -8,13 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetScatterplotRequestDTO представляет HTTP запрос на получение скаттерограммы
+// GetScatterplotRequestDTO представляет HTTP запрос на получение скаттерограммы.
 type GetScatterplotRequestDTO struct {
-	From string `form:"from" binding:"required"` // RFC3339 формат
-	To   string `form:"to" binding:"required"`   // RFC3339 формат
+	From string `binding:"required" form:"from"` // RFC3339 формат
+	To   string `binding:"required" form:"to"`   // RFC3339 формат
 }
 
-// GetScatterplotResponseDTO представляет HTTP ответ со скаттерограммой
+// GetScatterplotResponseDTO представляет HTTP ответ со скаттерограммой.
 type GetScatterplotResponseDTO struct {
 	*ScatterplotDataDTO
 }
@@ -23,6 +23,7 @@ func (r *RRIntervalsRouter) GetScatterplot(c *gin.Context) {
 	var reqDTO GetScatterplotRequestDTO
 	if err := c.ShouldBindQuery(&reqDTO); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -32,6 +33,7 @@ func (r *RRIntervalsRouter) GetScatterplot(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid from time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -40,6 +42,7 @@ func (r *RRIntervalsRouter) GetScatterplot(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid to time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -47,6 +50,7 @@ func (r *RRIntervalsRouter) GetScatterplot(c *gin.Context) {
 	scatterplot, err := r.rrIntervalsUsecase.GetRRScatterplot(c.Request.Context(), from, to)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -56,4 +60,4 @@ func (r *RRIntervalsRouter) GetScatterplot(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, responseDTO)
-} 
+}

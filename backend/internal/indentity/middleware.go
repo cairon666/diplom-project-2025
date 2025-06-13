@@ -9,13 +9,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Контекстный ключ для хранения claims
+// Контекстный ключ для хранения claims.
 type contextKey string
 
 const AuthClaimsContextKey = contextKey("auth_claims")
 
 func GetAuthClaims(ctx context.Context) (*AuthClaims, bool) {
 	claims, ok := ctx.Value(AuthClaimsContextKey).(*AuthClaims)
+
 	return claims, ok
 }
 
@@ -44,13 +45,14 @@ func (is *IdentityService) AuthMiddleware() gin.HandlerFunc {
 					ctx := context.WithValue(c.Request.Context(), AuthClaimsContextKey, claims)
 					c.Request = c.Request.WithContext(ctx)
 					c.Next()
+
 					return
 				}
 				// если ошибка - не прерываем сразу, попробуем api_key
 			}
 		}
 
-		//2. Попытка получить API key из заголовка X-Api-Key
+		// 2. Попытка получить API key из заголовка X-Api-Key
 		apiKey := c.GetHeader("X-Api-Key")
 		if apiKey != "" {
 			apiKeyHash := api_key.HashAPIKey(apiKey)
@@ -60,6 +62,7 @@ func (is *IdentityService) AuthMiddleware() gin.HandlerFunc {
 				ctx := context.WithValue(c.Request.Context(), AuthClaimsContextKey, claims)
 				c.Request = c.Request.WithContext(ctx)
 				c.Next()
+
 				return
 			}
 		}

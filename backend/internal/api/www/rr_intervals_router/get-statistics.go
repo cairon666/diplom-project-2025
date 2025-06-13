@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetRRStatisticsResponseDTO представляет HTTP ответ со статистикой R-R интервалов
+// GetRRStatisticsResponseDTO представляет HTTP ответ со статистикой R-R интервалов.
 type GetRRStatisticsResponseDTO struct {
 	Summary    *RRStatisticalSummaryDTO `json:"summary"`
 	Histogram  *RRHistogramDataDTO      `json:"histogram,omitempty"`
@@ -31,6 +31,7 @@ func (r *RRIntervalsRouter) GetRRStatistics(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "from and to parameters are required (RFC3339 format)",
 		})
+
 		return
 	}
 
@@ -40,6 +41,7 @@ func (r *RRIntervalsRouter) GetRRStatistics(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid from time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -48,6 +50,7 @@ func (r *RRIntervalsRouter) GetRRStatistics(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid to time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -59,6 +62,7 @@ func (r *RRIntervalsRouter) GetRRStatistics(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "invalid include_histogram parameter (expected boolean)",
 			})
+
 			return
 		}
 	}
@@ -70,6 +74,7 @@ func (r *RRIntervalsRouter) GetRRStatistics(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "invalid include_hrv parameter (expected boolean)",
 			})
+
 			return
 		}
 	}
@@ -81,6 +86,7 @@ func (r *RRIntervalsRouter) GetRRStatistics(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "invalid bins_count parameter (expected 0-50)",
 			})
+
 			return
 		}
 	}
@@ -95,6 +101,7 @@ func (r *RRIntervalsRouter) GetRRStatistics(c *gin.Context) {
 	resp, err := r.rrIntervalsUsecase.GetRRStatistics(c.Request.Context(), usecaseReq)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -117,4 +124,4 @@ func (r *RRIntervalsRouter) GetRRStatistics(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, responseDTO)
-} 
+}

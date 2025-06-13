@@ -16,12 +16,14 @@ func (r *UserRouter) UpdateSettingPassword(c *gin.Context) {
 	var req UpdateSettingPasswordRequest
 	if err := c.Bind(&req); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	dto := user_usecase.NewUpdateSettingPasswordRequest(req.Password)
 	if err := r.userUsecase.UpdateSettingPassword(c.Request.Context(), dto); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

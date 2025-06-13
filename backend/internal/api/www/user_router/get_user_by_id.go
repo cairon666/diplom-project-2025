@@ -18,6 +18,7 @@ func (r *UserRouter) GetUserByIdRouter(c *gin.Context) {
 	user, err := r.userUsecase.GetUserById(c.Request.Context())
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

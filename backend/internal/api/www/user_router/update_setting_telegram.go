@@ -22,12 +22,14 @@ func (r *UserRouter) UpdateSettingTelegram(c *gin.Context) {
 	var req UpdateSettingTelegramRequest
 	if err := c.Bind(&req); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	dto := user_usecase.NewUpdateSettingTelegramRequest(req.Id, req.FirstName, req.LastName, req.Username, req.PhotoURL, req.AuthDate, req.Hash)
 	if err := r.userUsecase.UpdateSettingTelegram(c.Request.Context(), dto); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

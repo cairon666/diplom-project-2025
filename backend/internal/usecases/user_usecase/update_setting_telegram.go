@@ -54,6 +54,7 @@ func (userUsecase *UserUsecase) UpdateSettingTelegram(ctx context.Context, dto U
 	_, err = userUsecase.authService.GetAuthProviderByProviderUserIdAndProviderName(ctx, dto.Id, models.TelegramProviderName)
 	if err != nil && !errors.Is(err, apperrors.NotFound()) {
 		userUsecase.logger.Error("failed to get auth provider", logger.Error(err))
+
 		return err
 	}
 
@@ -65,6 +66,7 @@ func (userUsecase *UserUsecase) UpdateSettingTelegram(ctx context.Context, dto U
 	authProvider := models.NewAuthProvider(id, authClaims.UserID, models.TelegramProviderName, dto.Id, time.Now())
 	if err := userUsecase.authService.CreateUserAuthProvider(ctx, authProvider); err != nil {
 		userUsecase.logger.Error("failed to create auth provider", logger.Error(err))
+
 		return err
 	}
 

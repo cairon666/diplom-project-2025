@@ -8,14 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetDifferentialHistogramRequestDTO представляет HTTP запрос на получение дифференциальной гистограммы
+// GetDifferentialHistogramRequestDTO представляет HTTP запрос на получение дифференциальной гистограммы.
 type GetDifferentialHistogramRequestDTO struct {
-	From      string `form:"from" binding:"required"`      // RFC3339 формат
-	To        string `form:"to" binding:"required"`        // RFC3339 формат
-	BinsCount int    `form:"bins_count,omitempty"`         // 0 = авто, 10-25
+	From      string `binding:"required"          form:"from"` // RFC3339 формат
+	To        string `binding:"required"          form:"to"`   // RFC3339 формат
+	BinsCount int    `form:"bins_count,omitempty"`             // 0 = авто, 10-25
 }
 
-// GetDifferentialHistogramResponseDTO представляет HTTP ответ с дифференциальной гистограммой
+// GetDifferentialHistogramResponseDTO представляет HTTP ответ с дифференциальной гистограммой.
 type GetDifferentialHistogramResponseDTO struct {
 	*DifferentialHistogramDataDTO
 }
@@ -24,6 +24,7 @@ func (r *RRIntervalsRouter) GetDifferentialHistogram(c *gin.Context) {
 	var reqDTO GetDifferentialHistogramRequestDTO
 	if err := c.ShouldBindQuery(&reqDTO); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -33,6 +34,7 @@ func (r *RRIntervalsRouter) GetDifferentialHistogram(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid from time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -41,6 +43,7 @@ func (r *RRIntervalsRouter) GetDifferentialHistogram(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid to time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -50,6 +53,7 @@ func (r *RRIntervalsRouter) GetDifferentialHistogram(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "bins_count must be between 0 and 50",
 		})
+
 		return
 	}
 
@@ -57,6 +61,7 @@ func (r *RRIntervalsRouter) GetDifferentialHistogram(c *gin.Context) {
 	histogram, err := r.rrIntervalsUsecase.GetRRDifferentialHistogram(c.Request.Context(), from, to, binsCount)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -66,4 +71,4 @@ func (r *RRIntervalsRouter) GetDifferentialHistogram(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, responseDTO)
-} 
+}

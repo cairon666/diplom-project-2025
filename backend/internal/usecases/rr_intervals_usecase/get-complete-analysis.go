@@ -11,20 +11,20 @@ import (
 	"github.com/cairon666/vkr-backend/pkg/logger"
 )
 
-// GetCompleteAnalysisRequest представляет запрос для комплексного анализа RR интервалов
+// GetCompleteAnalysisRequest представляет запрос для комплексного анализа RR интервалов.
 type GetCompleteAnalysisRequest struct {
 	From    time.Time                       `json:"from"`
 	To      time.Time                       `json:"to"`
 	Options *models.CompleteAnalysisOptions `json:"options,omitempty"`
 }
 
-// GetCompleteAnalysisResponse представляет ответ комплексного анализа RR интервалов
+// GetCompleteAnalysisResponse представляет ответ комплексного анализа RR интервалов.
 type GetCompleteAnalysisResponse struct {
 	Data *models.CompleteAnalysisData `json:"data"`
 }
 
 // GetCompleteAnalysis выполняет комплексный анализ RR интервалов за один оптимизированный запрос
-// Этот метод заменяет множественные вызовы отдельных аналитических методов
+// Этот метод заменяет множественные вызовы отдельных аналитических методов.
 func (uc *RRIntervalsUsecase) GetCompleteAnalysis(ctx context.Context, req GetCompleteAnalysisRequest) (GetCompleteAnalysisResponse, error) {
 	// Проверяем права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -68,6 +68,7 @@ func (uc *RRIntervalsUsecase) GetCompleteAnalysis(ctx context.Context, req GetCo
 			logger.Time("from", req.From),
 			logger.Time("to", req.To),
 			logger.Error(err))
+
 		return GetCompleteAnalysisResponse{}, apperrors.AnalysisNotPossiblef("failed to perform complete analysis: %v", err)
 	}
 
@@ -85,20 +86,20 @@ func (uc *RRIntervalsUsecase) GetCompleteAnalysis(ctx context.Context, req GetCo
 	}, nil
 }
 
-// getDefaultCompleteAnalysisOptions возвращает опции по умолчанию для комплексного анализа
+// getDefaultCompleteAnalysisOptions возвращает опции по умолчанию для комплексного анализа.
 func (uc *RRIntervalsUsecase) getDefaultCompleteAnalysisOptions() *models.CompleteAnalysisOptions {
 	return &models.CompleteAnalysisOptions{
 		AggregationIntervalMinutes:    5,     // 5-минутные интервалы агрегации
-		TrendWindowSizeMinutes:       15,     // 15-минутное окно для анализа трендов
-		HistogramBinsCount:           25,     // 25 bins для основной гистограммы
-		DiffHistogramBinsCount:       20,     // 20 bins для дифференциальной гистограммы
+		TrendWindowSizeMinutes:        15,    // 15-минутное окно для анализа трендов
+		HistogramBinsCount:            25,    // 25 bins для основной гистограммы
+		DiffHistogramBinsCount:        20,    // 20 bins для дифференциальной гистограммы
 		EnableFrequencyDomainAnalysis: false, // Частотный анализ отключен для производительности
-		IncludeRawData:               true,   // Включаем сырые данные
-		MaxDataPoints:                10000,  // Лимит на количество точек данных
+		IncludeRawData:                true,  // Включаем сырые данные
+		MaxDataPoints:                 10000, // Лимит на количество точек данных
 	}
 }
 
-// validateCompleteAnalysisOptions валидирует опции комплексного анализа
+// validateCompleteAnalysisOptions валидирует опции комплексного анализа.
 func (uc *RRIntervalsUsecase) validateCompleteAnalysisOptions(options *models.CompleteAnalysisOptions) error {
 	// Валидация интервала агрегации
 	if options.AggregationIntervalMinutes < 1 || options.AggregationIntervalMinutes > 60 {
@@ -125,4 +126,4 @@ func (uc *RRIntervalsUsecase) validateCompleteAnalysisOptions(options *models.Co
 	}
 
 	return nil
-} 
+}

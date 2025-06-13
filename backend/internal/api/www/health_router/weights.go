@@ -12,20 +12,20 @@ import (
 	"github.com/google/uuid"
 )
 
-// CreateWeightRequest представляет запрос на создание веса
+// CreateWeightRequest представляет запрос на создание веса.
 type CreateWeightRequest struct {
-	ID        *string  `json:"id,omitempty"`
-	WeightKg  float64  `json:"weight_kg" binding:"required,min=0"`
-	DeviceID  *string  `json:"device_id,omitempty"`
-	CreatedAt *string  `json:"created_at,omitempty"`
+	ID        *string `json:"id,omitempty"`
+	WeightKg  float64 `binding:"required,min=0"    json:"weight_kg"`
+	DeviceID  *string `json:"device_id,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
 }
 
-// CreateWeightsRequest представляет запрос на создание множественных весов
+// CreateWeightsRequest представляет запрос на создание множественных весов.
 type CreateWeightsRequest struct {
-	Weights []CreateWeightRequest `json:"weights" binding:"required,min=1"`
+	Weights []CreateWeightRequest `binding:"required,min=1" json:"weights"`
 }
 
-// Response DTOs для router
+// Response DTOs для router.
 type WeightResponse struct {
 	ID        string    `json:"id"`
 	WeightKg  float64   `json:"weight_kg"`
@@ -41,14 +41,14 @@ type DailyWeightResponse struct {
 	Weights map[string]float64 `json:"weights"` // key: day timestamp
 }
 
-// Функции конвертации
+// Функции конвертации.
 func convertToRouterWeight(weight models.Weight) WeightResponse {
 	var deviceID *string
 	if weight.DeviceID != uuid.Nil {
 		deviceIDStr := weight.DeviceID.String()
 		deviceID = &deviceIDStr
 	}
-	
+
 	return WeightResponse{
 		ID:        weight.ID.String(),
 		WeightKg:  weight.WeightKg,
@@ -62,14 +62,16 @@ func convertToRouterWeights(weights []models.Weight) []WeightResponse {
 	for i, weight := range weights {
 		result[i] = convertToRouterWeight(weight)
 	}
+
 	return result
 }
 
-// CreateWeight обрабатывает запрос на создание веса
+// CreateWeight обрабатывает запрос на создание веса.
 func (r *HealthRouter) CreateWeight(c *gin.Context) {
 	var req CreateWeightRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -83,6 +85,7 @@ func (r *HealthRouter) CreateWeight(c *gin.Context) {
 	}
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -92,6 +95,7 @@ func (r *HealthRouter) CreateWeight(c *gin.Context) {
 		deviceID, err = r.parseOptionalUUID(*req.DeviceID)
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 	}
@@ -102,6 +106,7 @@ func (r *HealthRouter) CreateWeight(c *gin.Context) {
 		createdAt, err = time.Parse(time.RFC3339, *req.CreatedAt)
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 	} else {
@@ -112,17 +117,19 @@ func (r *HealthRouter) CreateWeight(c *gin.Context) {
 	_, err = r.healthUsecase.CreateWeight(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	c.Status(http.StatusCreated)
 }
 
-// CreateWeights обрабатывает запрос на создание множественных весов
+// CreateWeights обрабатывает запрос на создание множественных весов.
 func (r *HealthRouter) CreateWeights(c *gin.Context) {
 	var req CreateWeightsRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -138,6 +145,7 @@ func (r *HealthRouter) CreateWeights(c *gin.Context) {
 		}
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 
@@ -147,6 +155,7 @@ func (r *HealthRouter) CreateWeights(c *gin.Context) {
 			deviceID, err = r.parseOptionalUUID(*weightReq.DeviceID)
 			if err != nil {
 				www.HandleError(c, apperrors.InvalidParams())
+
 				return
 			}
 		}
@@ -157,6 +166,7 @@ func (r *HealthRouter) CreateWeights(c *gin.Context) {
 			createdAt, err = time.Parse(time.RFC3339, *weightReq.CreatedAt)
 			if err != nil {
 				www.HandleError(c, apperrors.InvalidParams())
+
 				return
 			}
 		} else {
@@ -170,17 +180,19 @@ func (r *HealthRouter) CreateWeights(c *gin.Context) {
 	_, err := r.healthUsecase.CreateWeights(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	c.Status(http.StatusCreated)
 }
 
-// GetWeights обрабатывает запрос на получение весов
+// GetWeights обрабатывает запрос на получение весов.
 func (r *HealthRouter) GetWeights(c *gin.Context) {
 	from, to, err := r.parseDateRange(c)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -188,6 +200,7 @@ func (r *HealthRouter) GetWeights(c *gin.Context) {
 	usecaseResp, err := r.healthUsecase.GetWeights(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -195,15 +208,16 @@ func (r *HealthRouter) GetWeights(c *gin.Context) {
 	routerResp := WeightsResponse{
 		Weights: convertToRouterWeights(usecaseResp.Weights),
 	}
-	
+
 	c.JSON(http.StatusOK, routerResp)
 }
 
-// GetDailyWeightAvg обрабатывает запрос на получение агрегированных весов по дням
+// GetDailyWeightAvg обрабатывает запрос на получение агрегированных весов по дням.
 func (r *HealthRouter) GetDailyWeightAvg(c *gin.Context) {
 	from, to, err := r.parseDateRange(c)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -211,6 +225,7 @@ func (r *HealthRouter) GetDailyWeightAvg(c *gin.Context) {
 	usecaseResp, err := r.healthUsecase.GetDailyWeightAvg(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -218,6 +233,6 @@ func (r *HealthRouter) GetDailyWeightAvg(c *gin.Context) {
 	routerResp := DailyWeightResponse{
 		Weights: convertTimeMapToStringMapFloat(usecaseResp.Weights),
 	}
-	
+
 	c.JSON(http.StatusOK, routerResp)
-} 
+}

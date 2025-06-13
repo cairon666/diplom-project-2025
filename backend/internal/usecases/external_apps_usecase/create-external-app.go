@@ -48,12 +48,14 @@ func (uc *ExternalAppsUsecase) CreateExternalApp(ctx context.Context, dto Create
 		for _, availableRole := range availableRoleToExternalApp {
 			if role == availableRole {
 				found = true
+
 				break
 			}
 		}
-		
+
 		if !found {
 			uc.logger.Error("try assign role from non available role", logger.String("role", role))
+
 			return CreateExternalAppResponse{}, apperrors.Forbiddenf("try assign role from non available role: %s", role)
 		}
 	}
@@ -62,6 +64,7 @@ func (uc *ExternalAppsUsecase) CreateExternalApp(ctx context.Context, dto Create
 	apiKey, err := api_key.GenerateAPIKey()
 	if err != nil {
 		uc.logger.Error("failed to generate api key", logger.Error(err))
+
 		return CreateExternalAppResponse{}, apperrors.InternalError()
 	}
 	hashApiKey := api_key.HashAPIKey(apiKey)
@@ -69,11 +72,13 @@ func (uc *ExternalAppsUsecase) CreateExternalApp(ctx context.Context, dto Create
 	externalApp := models.NewExternalApp(id, claims.UserID, dto.Name, hashApiKey, time.Now())
 	if err := uc.externalAppsService.Create(ctx, externalApp); err != nil {
 		uc.logger.Error("failed to create external app", logger.Error(err))
+
 		return CreateExternalAppResponse{}, apperrors.InternalError()
 	}
 
 	if err := uc.rolesService.AssignRolesToExternalApp(ctx, externalApp.ID, dto.Roles); err != nil {
 		uc.logger.Error("failed to assign roles to external app", logger.Error(err))
+
 		return CreateExternalAppResponse{}, apperrors.InternalError()
 	}
 

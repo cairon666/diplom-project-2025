@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// BuildScatterplot строит скаттерограмму (диаграмму Пуанкаре) R-R интервалов
+// BuildScatterplot строит скаттерограмму (диаграмму Пуанкаре) R-R интервалов.
 func (s *RRIntervalsService) BuildScatterplot(ctx context.Context, userID uuid.UUID, from, to time.Time) (*models.ScatterplotData, error) {
 	// Получаем данные R-R интервалов
 	values, err := s.rrIntervalsRepo.GetRawValuesForAnalysis(ctx, userID, from, to)
@@ -50,7 +50,7 @@ func (s *RRIntervalsService) BuildScatterplot(ctx context.Context, userID uuid.U
 	}, nil
 }
 
-// calculateScatterplotStatistics вычисляет статистику скаттерограммы (параметры Пуанкаре)
+// calculateScatterplotStatistics вычисляет статистику скаттерограммы (параметры Пуанкаре).
 func (s *RRIntervalsService) calculateScatterplotStatistics(points []models.ScatterplotPoint) *models.ScatterplotStatistics {
 	if len(points) == 0 {
 		return &models.ScatterplotStatistics{}
@@ -70,7 +70,7 @@ func (s *RRIntervalsService) calculateScatterplotStatistics(points []models.Scat
 	for _, point := range points {
 		diffRRn := float64(point.RRn) - meanRRn
 		diffRRn1 := float64(point.RRn1) - meanRRn1
-		
+
 		varRRn += diffRRn * diffRRn
 		varRRn1 += diffRRn1 * diffRRn1
 		covariance += diffRRn * diffRRn1
@@ -119,7 +119,7 @@ func (s *RRIntervalsService) calculateScatterplotStatistics(points []models.Scat
 	}
 }
 
-// calculatePoincarePlotEllipse вычисляет параметры эллипса диаграммы Пуанкаре
+// calculatePoincarePlotEllipse вычисляет параметры эллипса диаграммы Пуанкаре.
 func (s *RRIntervalsService) calculatePoincarePlotEllipse(points []models.ScatterplotPoint, stats *models.ScatterplotStatistics) *models.PoincarePlotEllipse {
 	if len(points) == 0 {
 		return &models.PoincarePlotEllipse{}
@@ -144,4 +144,4 @@ func (s *RRIntervalsService) calculatePoincarePlotEllipse(points []models.Scatte
 		SD2:     stats.SD2,
 		Area:    area,
 	}
-} 
+}

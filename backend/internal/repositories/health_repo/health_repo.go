@@ -14,14 +14,14 @@ import (
 	"github.com/influxdata/influxdb-client-go/v2/api/write"
 )
 
-// HealthRepo реализует репозиторий для работы с данными здоровья в InfluxDB
+// HealthRepo реализует репозиторий для работы с данными здоровья в InfluxDB.
 type HealthRepo struct {
 	influxClient influxdb.InfluxDBClient
 	org          string
 	bucket       string
 }
 
-// NewHealthRepo создает новый экземпляр репозитория
+// NewHealthRepo создает новый экземпляр репозитория.
 func NewHealthRepo(influxClient influxdb.InfluxDBClient, conf *config.Config) *HealthRepo {
 	return &HealthRepo{
 		influxClient: influxClient,
@@ -30,7 +30,7 @@ func NewHealthRepo(influxClient influxdb.InfluxDBClient, conf *config.Config) *H
 	}
 }
 
-// GetSteps получает данные о шагах пользователя за период
+// GetSteps получает данные о шагах пользователя за период.
 func (r *HealthRepo) GetSteps(ctx context.Context, userID uuid.UUID, from, to time.Time) ([]models.Step, error) {
 	query := fmt.Sprintf(`
 		from(bucket: "%s")
@@ -92,7 +92,7 @@ func (r *HealthRepo) GetSteps(ctx context.Context, userID uuid.UUID, from, to ti
 	return steps, nil
 }
 
-// GetHeartRates получает данные о пульсе пользователя за период
+// GetHeartRates получает данные о пульсе пользователя за период.
 func (r *HealthRepo) GetHeartRates(ctx context.Context, userID uuid.UUID, from, to time.Time) ([]models.HeartRate, error) {
 	query := fmt.Sprintf(`
 		from(bucket: "%s")
@@ -154,7 +154,7 @@ func (r *HealthRepo) GetHeartRates(ctx context.Context, userID uuid.UUID, from, 
 	return heartRates, nil
 }
 
-// GetWeights получает данные о весе пользователя за период
+// GetWeights получает данные о весе пользователя за период.
 func (r *HealthRepo) GetWeights(ctx context.Context, userID uuid.UUID, from, to time.Time) ([]models.Weight, error) {
 	query := fmt.Sprintf(`
 		from(bucket: "%s")
@@ -216,7 +216,7 @@ func (r *HealthRepo) GetWeights(ctx context.Context, userID uuid.UUID, from, to 
 	return weights, nil
 }
 
-// GetTemperatures получает данные о температуре пользователя за период
+// GetTemperatures получает данные о температуре пользователя за период.
 func (r *HealthRepo) GetTemperatures(ctx context.Context, userID uuid.UUID, from, to time.Time) ([]models.Temperature, error) {
 	query := fmt.Sprintf(`
 		from(bucket: "%s")
@@ -278,7 +278,7 @@ func (r *HealthRepo) GetTemperatures(ctx context.Context, userID uuid.UUID, from
 	return temperatures, nil
 }
 
-// GetSleeps получает данные о сне пользователя за период
+// GetSleeps получает данные о сне пользователя за период.
 func (r *HealthRepo) GetSleeps(ctx context.Context, userID uuid.UUID, from, to time.Time) ([]models.Sleep, error) {
 	query := fmt.Sprintf(`
 		from(bucket: "%s")
@@ -370,7 +370,7 @@ func (r *HealthRepo) GetSleeps(ctx context.Context, userID uuid.UUID, from, to t
 
 // Методы для записи данных
 
-// CreateStep создает запись о шагах
+// CreateStep создает запись о шагах.
 func (r *HealthRepo) CreateStep(ctx context.Context, step models.Step) error {
 	writeAPI := r.influxClient.WriteAPIBlocking(r.org, r.bucket)
 
@@ -388,7 +388,7 @@ func (r *HealthRepo) CreateStep(ctx context.Context, step models.Step) error {
 	return writeAPI.WritePoint(ctx, point)
 }
 
-// CreateHeartRate создает запись о пульсе
+// CreateHeartRate создает запись о пульсе.
 func (r *HealthRepo) CreateHeartRate(ctx context.Context, heartRate models.HeartRate) error {
 	writeAPI := r.influxClient.WriteAPIBlocking(r.org, r.bucket)
 
@@ -406,7 +406,7 @@ func (r *HealthRepo) CreateHeartRate(ctx context.Context, heartRate models.Heart
 	return writeAPI.WritePoint(ctx, point)
 }
 
-// CreateWeight создает запись о весе
+// CreateWeight создает запись о весе.
 func (r *HealthRepo) CreateWeight(ctx context.Context, weight models.Weight) error {
 	writeAPI := r.influxClient.WriteAPIBlocking(r.org, r.bucket)
 
@@ -424,7 +424,7 @@ func (r *HealthRepo) CreateWeight(ctx context.Context, weight models.Weight) err
 	return writeAPI.WritePoint(ctx, point)
 }
 
-// CreateTemperature создает запись о температуре
+// CreateTemperature создает запись о температуре.
 func (r *HealthRepo) CreateTemperature(ctx context.Context, temperature models.Temperature) error {
 	writeAPI := r.influxClient.WriteAPIBlocking(r.org, r.bucket)
 
@@ -442,7 +442,7 @@ func (r *HealthRepo) CreateTemperature(ctx context.Context, temperature models.T
 	return writeAPI.WritePoint(ctx, point)
 }
 
-// CreateSleep создает запись о сне
+// CreateSleep создает запись о сне.
 func (r *HealthRepo) CreateSleep(ctx context.Context, sleep models.Sleep) error {
 	writeAPI := r.influxClient.WriteAPIBlocking(r.org, r.bucket)
 
@@ -463,7 +463,7 @@ func (r *HealthRepo) CreateSleep(ctx context.Context, sleep models.Sleep) error 
 
 // Batch методы для массовой записи
 
-// CreateSteps создает множественные записи о шагах
+// CreateSteps создает множественные записи о шагах.
 func (r *HealthRepo) CreateSteps(ctx context.Context, steps []models.Step) error {
 	for _, step := range steps {
 		if err := r.CreateStep(ctx, step); err != nil {
@@ -474,7 +474,7 @@ func (r *HealthRepo) CreateSteps(ctx context.Context, steps []models.Step) error
 	return nil
 }
 
-// CreateHeartRates создает множественные записи о пульсе
+// CreateHeartRates создает множественные записи о пульсе.
 func (r *HealthRepo) CreateHeartRates(ctx context.Context, heartRates []models.HeartRate) error {
 	for _, hr := range heartRates {
 		if err := r.CreateHeartRate(ctx, hr); err != nil {
@@ -485,7 +485,7 @@ func (r *HealthRepo) CreateHeartRates(ctx context.Context, heartRates []models.H
 	return nil
 }
 
-// CreateWeights создает множественные записи о весе
+// CreateWeights создает множественные записи о весе.
 func (r *HealthRepo) CreateWeights(ctx context.Context, weights []models.Weight) error {
 	for _, weight := range weights {
 		if err := r.CreateWeight(ctx, weight); err != nil {
@@ -496,7 +496,7 @@ func (r *HealthRepo) CreateWeights(ctx context.Context, weights []models.Weight)
 	return nil
 }
 
-// CreateTemperatures создает множественные записи о температуре
+// CreateTemperatures создает множественные записи о температуре.
 func (r *HealthRepo) CreateTemperatures(ctx context.Context, temperatures []models.Temperature) error {
 	for _, temp := range temperatures {
 		if err := r.CreateTemperature(ctx, temp); err != nil {
@@ -507,7 +507,7 @@ func (r *HealthRepo) CreateTemperatures(ctx context.Context, temperatures []mode
 	return nil
 }
 
-// CreateSleeps создает множественные записи о сне
+// CreateSleeps создает множественные записи о сне.
 func (r *HealthRepo) CreateSleeps(ctx context.Context, sleeps []models.Sleep) error {
 	for _, sleep := range sleeps {
 		if err := r.CreateSleep(ctx, sleep); err != nil {
@@ -520,7 +520,7 @@ func (r *HealthRepo) CreateSleeps(ctx context.Context, sleeps []models.Sleep) er
 
 // Методы агрегации данных
 
-// GetHourlySteps возвращает агрегированные данные по шагам по часам
+// GetHourlySteps возвращает агрегированные данные по шагам по часам.
 func (r *HealthRepo) GetHourlySteps(ctx context.Context, userID uuid.UUID, from, to time.Time) (map[time.Time]int64, error) {
 	// Валидация времени
 	if from.After(to) {
@@ -545,7 +545,7 @@ func (r *HealthRepo) GetHourlySteps(ctx context.Context, userID uuid.UUID, from,
 	return r.executeAggregationQuery(ctx, query)
 }
 
-// GetDailySteps возвращает агрегированные данные по шагам по дням
+// GetDailySteps возвращает агрегированные данные по шагам по дням.
 func (r *HealthRepo) GetDailySteps(ctx context.Context, userID uuid.UUID, from, to time.Time) (map[time.Time]int64, error) {
 	// Валидация времени
 	if from.After(to) {
@@ -570,7 +570,7 @@ func (r *HealthRepo) GetDailySteps(ctx context.Context, userID uuid.UUID, from, 
 	return r.executeAggregationQuery(ctx, query)
 }
 
-// GetHourlyHeartRateAvg возвращает средний пульс по часам
+// GetHourlyHeartRateAvg возвращает средний пульс по часам.
 func (r *HealthRepo) GetHourlyHeartRateAvg(ctx context.Context, userID uuid.UUID, from, to time.Time) (map[time.Time]float64, error) {
 	query := fmt.Sprintf(`
 		from(bucket: "%s")
@@ -585,7 +585,7 @@ func (r *HealthRepo) GetHourlyHeartRateAvg(ctx context.Context, userID uuid.UUID
 	return r.executeFloatAggregationQuery(ctx, query)
 }
 
-// GetDailyHeartRateAvg возвращает средний пульс по дням
+// GetDailyHeartRateAvg возвращает средний пульс по дням.
 func (r *HealthRepo) GetDailyHeartRateAvg(ctx context.Context, userID uuid.UUID, from, to time.Time) (map[time.Time]float64, error) {
 	// Валидация времени
 	if from.After(to) {
@@ -610,7 +610,7 @@ func (r *HealthRepo) GetDailyHeartRateAvg(ctx context.Context, userID uuid.UUID,
 	return r.executeFloatAggregationQuery(ctx, query)
 }
 
-// GetDailyWeightAvg возвращает средний вес по дням
+// GetDailyWeightAvg возвращает средний вес по дням.
 func (r *HealthRepo) GetDailyWeightAvg(ctx context.Context, userID uuid.UUID, from, to time.Time) (map[time.Time]float64, error) {
 	// Валидация времени
 	if from.After(to) {
@@ -635,7 +635,7 @@ func (r *HealthRepo) GetDailyWeightAvg(ctx context.Context, userID uuid.UUID, fr
 	return r.executeFloatAggregationQuery(ctx, query)
 }
 
-// GetHourlyTemperatureAvg возвращает среднюю температуру по часам
+// GetHourlyTemperatureAvg возвращает среднюю температуру по часам.
 func (r *HealthRepo) GetHourlyTemperatureAvg(ctx context.Context, userID uuid.UUID, from, to time.Time) (map[time.Time]float64, error) {
 	query := fmt.Sprintf(`
 		from(bucket: "%s")
@@ -650,7 +650,7 @@ func (r *HealthRepo) GetHourlyTemperatureAvg(ctx context.Context, userID uuid.UU
 	return r.executeFloatAggregationQuery(ctx, query)
 }
 
-// GetDailyTemperatureAvg возвращает среднюю температуру по дням
+// GetDailyTemperatureAvg возвращает среднюю температуру по дням.
 func (r *HealthRepo) GetDailyTemperatureAvg(ctx context.Context, userID uuid.UUID, from, to time.Time) (map[time.Time]float64, error) {
 	query := fmt.Sprintf(`
 		from(bucket: "%s")
@@ -665,7 +665,7 @@ func (r *HealthRepo) GetDailyTemperatureAvg(ctx context.Context, userID uuid.UUI
 	return r.executeFloatAggregationQuery(ctx, query)
 }
 
-// GetDailySleepDuration возвращает продолжительность сна по дням
+// GetDailySleepDuration возвращает продолжительность сна по дням.
 func (r *HealthRepo) GetDailySleepDuration(ctx context.Context, userID uuid.UUID, from, to time.Time) (map[time.Time]float64, error) {
 	// Валидация времени
 	if from.After(to) {
@@ -697,7 +697,7 @@ func (r *HealthRepo) GetDailySleepDuration(ctx context.Context, userID uuid.UUID
 	return r.executeFloatAggregationQuery(ctx, query)
 }
 
-// executeAggregationQuery выполняет запрос агрегации и возвращает результат как map[time.Time]int64
+// executeAggregationQuery выполняет запрос агрегации и возвращает результат как map[time.Time]int64.
 func (r *HealthRepo) executeAggregationQuery(ctx context.Context, query string) (map[time.Time]int64, error) {
 	queryAPI := r.influxClient.QueryAPI(r.org)
 	result, err := queryAPI.Query(ctx, query)
@@ -707,6 +707,7 @@ func (r *HealthRepo) executeAggregationQuery(ctx context.Context, query string) 
 			// Возвращаем пустой результат вместо ошибки
 			return make(map[time.Time]int64), nil
 		}
+
 		return nil, apperrors.HealthDataQueryFailedf("failed to execute aggregation query: %v", err)
 	}
 	defer result.Close()
@@ -733,13 +734,14 @@ func (r *HealthRepo) executeAggregationQuery(ctx context.Context, query string) 
 		if strings.Contains(result.Err().Error(), "cannot query an empty range") {
 			return make(map[time.Time]int64), nil
 		}
+
 		return nil, apperrors.HealthDataReadFailedf("error reading aggregation result: %v", result.Err())
 	}
 
 	return data, nil
 }
 
-// executeFloatAggregationQuery выполняет запрос агрегации и возвращает результат как map[time.Time]float64
+// executeFloatAggregationQuery выполняет запрос агрегации и возвращает результат как map[time.Time]float64.
 func (r *HealthRepo) executeFloatAggregationQuery(ctx context.Context, query string) (map[time.Time]float64, error) {
 	queryAPI := r.influxClient.QueryAPI(r.org)
 	result, err := queryAPI.Query(ctx, query)
@@ -749,6 +751,7 @@ func (r *HealthRepo) executeFloatAggregationQuery(ctx context.Context, query str
 			// Возвращаем пустой результат вместо ошибки
 			return make(map[time.Time]float64), nil
 		}
+
 		return nil, apperrors.HealthDataQueryFailedf("failed to execute float aggregation query: %v", err)
 	}
 	defer result.Close()
@@ -775,6 +778,7 @@ func (r *HealthRepo) executeFloatAggregationQuery(ctx context.Context, query str
 		if strings.Contains(result.Err().Error(), "cannot query an empty range") {
 			return make(map[time.Time]float64), nil
 		}
+
 		return nil, apperrors.HealthDataReadFailedf("error reading float aggregation result: %v", result.Err())
 	}
 

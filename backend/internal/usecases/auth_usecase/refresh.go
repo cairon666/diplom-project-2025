@@ -33,18 +33,21 @@ func (authUsecase *AuthUsecase) RefreshToken(ctx context.Context, refreshTokenRe
 	claims, err := authUsecase.jwtService.ParseToken(refreshTokenReq.RefreshToken)
 	if err != nil {
 		authUsecase.logger.Error("failed to parse token", logger.Error(err))
+
 		return RefreshTokenResponse{}, apperrors.InvalidToken()
 	}
 
 	user, err := authUsecase.userService.GetUserById(ctx, claims.UserID)
 	if err != nil {
 		authUsecase.logger.Error("failed to get user by id", logger.Error(err))
+
 		return RefreshTokenResponse{}, apperrors.InternalError()
 	}
 
 	accessToken, refreshToken, err := authUsecase.authService.GenerateJWT(ctx, user)
 	if err != nil {
 		authUsecase.logger.Error("failed to generate jwt", logger.Error(err))
+
 		return RefreshTokenResponse{}, apperrors.InternalError()
 	}
 

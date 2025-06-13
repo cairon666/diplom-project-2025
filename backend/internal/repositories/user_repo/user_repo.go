@@ -26,6 +26,7 @@ func getEmail(email *string) string {
 	if email == nil {
 		return ""
 	}
+
 	return *email
 }
 
@@ -43,10 +44,12 @@ func (u *UserRepo) GetUserById(ctx context.Context, ID uuid.UUID) (*models.User,
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, apperrors.NotFound()
 		}
+
 		return nil, err
 	}
 
 	user := models.NewUser(dbUser.ID, getEmail(dbUser.Email), dbUser.FirstName, dbUser.LastName, dbUser.IsRegistrationComplete, dbUser.CreatedAt)
+
 	return user, nil
 }
 
@@ -56,10 +59,12 @@ func (u *UserRepo) GetUserByEmail(ctx context.Context, email string) (*models.Us
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, apperrors.NotFound()
 		}
+
 		return nil, err
 	}
 
 	user := models.NewUser(dbUser.ID, getEmail(dbUser.Email), dbUser.FirstName, dbUser.LastName, dbUser.IsRegistrationComplete, dbUser.CreatedAt)
+
 	return user, nil
 }
 
@@ -77,13 +82,14 @@ func (u *UserRepo) CreateUser(ctx context.Context, user *models.User) error {
 		var pgErr *pgconn.PgError
 
 		if errors.As(err, &pgErr) {
-			switch {
-			case pgErr.ConstraintName == "USERS_EMAIL_UNIQUE":
+			switch pgErr.ConstraintName {
+			case "USERS_EMAIL_UNIQUE":
 				return apperrors.AlreadyExists()
 			default:
 				return err
 			}
 		}
+
 		return err
 	}
 
@@ -102,8 +108,8 @@ func (u *UserRepo) UpdateUser(ctx context.Context, user *models.User) error {
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
-			switch {
-			case pgErr.ConstraintName == "USERS_EMAIL_UNIQUE":
+			switch pgErr.ConstraintName {
+			case "USERS_EMAIL_UNIQUE":
 				return apperrors.AlreadyExists()
 			}
 		}

@@ -52,6 +52,7 @@ func (r *HealthRouter) parseUUID(idStr string) (uuid.UUID, error) {
 	if idStr == "" {
 		return uuid.New(), nil // Генерируем новый UUID если не указан
 	}
+
 	return uuid.Parse(idStr)
 }
 
@@ -63,14 +64,15 @@ func (r *HealthRouter) parseOptionalUUID(idStr string) (*uuid.UUID, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &id, nil
-} 
 
+	return &id, nil
+}
 
 func convertTimeMapToStringMapFloat(timeMap map[time.Time]float64) map[string]float64 {
 	result := make(map[string]float64)
 	for t, value := range timeMap {
 		result[t.Format(time.RFC3339)] = value
 	}
+
 	return result
 }

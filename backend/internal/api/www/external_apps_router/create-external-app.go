@@ -9,8 +9,8 @@ import (
 )
 
 type CreateExternalAppRequest struct {
-	Name  string   `json:"name" binding:"required"`
-	Roles []string `json:"roles" binding:"required"`
+	Name  string   `binding:"required" json:"name"`
+	Roles []string `binding:"required" json:"roles"`
 }
 
 type CreateExternalAppResponse struct {
@@ -22,6 +22,7 @@ func (r *ExternalAppsRouter) CreateExternalApp(ctx *gin.Context) {
 	var req CreateExternalAppRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		www.HandleError(ctx, err)
+
 		return
 	}
 
@@ -29,6 +30,7 @@ func (r *ExternalAppsRouter) CreateExternalApp(ctx *gin.Context) {
 	resp, err := r.externalAppsUsecase.CreateExternalApp(ctx.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(ctx, err)
+
 		return
 	}
 

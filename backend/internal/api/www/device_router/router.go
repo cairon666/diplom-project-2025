@@ -34,6 +34,6 @@ func (r *DeviceRouter) Register(router gin.IRouter) {
 	group.POST("/user/devices", r.CreateDevice)
 	group.DELETE("/user/devices/:id", r.DeleteDevice)
 
-	//group.GET("/user/external-apps/:id", nil)
-	//group.PATCH("/user/external-apps/:id", nil)
+	// group.GET("/user/external-apps/:id", nil)
+	// group.PATCH("/user/external-apps/:id", nil)
 }

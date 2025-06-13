@@ -24,6 +24,7 @@ func (dr *DeviceRouter) GetDeviceList(c *gin.Context) {
 	resp, err := dr.deviceUsecase.GetDeviceList(c.Request.Context())
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

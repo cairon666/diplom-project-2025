@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// HealthService определяет интерфейс для сервиса здоровья
+// HealthService определяет интерфейс для сервиса здоровья.
 type HealthService interface {
 	// CRUD операции
 	CreateStep(ctx context.Context, step models.Step) error
@@ -33,7 +33,7 @@ type HealthService interface {
 	GetSleeps(ctx context.Context, userID uuid.UUID, from, to time.Time) ([]models.Sleep, error)
 }
 
-// AggregationService определяет интерфейс для сервиса агрегации
+// AggregationService определяет интерфейс для сервиса агрегации.
 type AggregationService interface {
 	GetHourlySteps(ctx context.Context, userID uuid.UUID, from, to time.Time) (map[time.Time]int64, error)
 	GetDailySteps(ctx context.Context, userID uuid.UUID, from, to time.Time) (map[time.Time]int64, error)
@@ -45,14 +45,14 @@ type AggregationService interface {
 	GetDailySleepDuration(ctx context.Context, userID uuid.UUID, from, to time.Time) (map[time.Time]float64, error)
 }
 
-// HealthUsecase реализует бизнес-логику для работы с данными о здоровье
+// HealthUsecase реализует бизнес-логику для работы с данными о здоровье.
 type HealthUsecase struct {
 	healthService      HealthService
 	aggregationService AggregationService
 	logger             logger.ILogger
 }
 
-// NewHealthUsecase создает новый экземпляр usecase здоровья
+// NewHealthUsecase создает новый экземпляр usecase здоровья.
 func NewHealthUsecase(healthService HealthService, aggregationService AggregationService, logger logger.ILogger) *HealthUsecase {
 	return &HealthUsecase{
 		healthService:      healthService,

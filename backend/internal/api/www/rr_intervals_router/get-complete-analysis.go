@@ -12,48 +12,48 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// CompleteAnalysisDataDTO представляет полный комплексный анализ для HTTP ответа
+// CompleteAnalysisDataDTO представляет полный комплексный анализ для HTTP ответа.
 type CompleteAnalysisDataDTO struct {
 	// Базовые данные
-	RawValues      []int64             `json:"raw_values,omitempty"`
-	TimeRange      TimeRangeDTO        `json:"time_range"`
-	
+	RawValues []int64      `json:"raw_values,omitempty"`
+	TimeRange TimeRangeDTO `json:"time_range"`
+
 	// Статистические данные
-	Statistics     *RRStatisticalSummaryDTO `json:"statistics"`
-	
+	Statistics *RRStatisticalSummaryDTO `json:"statistics"`
+
 	// HRV метрики
-	HRVMetrics     *HRVMetricsDTO           `json:"hrv_metrics"`
-	
+	HRVMetrics *HRVMetricsDTO `json:"hrv_metrics"`
+
 	// Агрегированные данные по интервалам (используем существующий тип)
-	AggregatedData []AggregatedRRDataDTO    `json:"aggregated_data"`
-	
+	AggregatedData []AggregatedRRDataDTO `json:"aggregated_data"`
+
 	// Анализ трендов
-	TrendAnalysis  *RRTrendAnalysisDTO      `json:"trend_analysis"`
-	
+	TrendAnalysis *RRTrendAnalysisDTO `json:"trend_analysis"`
+
 	// Гистограммы
-	Histogram      *RRHistogramDataDTO              `json:"histogram"`
-	DiffHistogram  *DifferentialHistogramDataDTO    `json:"differential_histogram"`
-	
+	Histogram     *RRHistogramDataDTO           `json:"histogram"`
+	DiffHistogram *DifferentialHistogramDataDTO `json:"differential_histogram"`
+
 	// Скаттерограмма
-	Scatterplot    *ScatterplotDataDTO             `json:"scatterplot"`
-	
+	Scatterplot *ScatterplotDataDTO `json:"scatterplot"`
+
 	// Метаданные
-	ProcessingTime string                  `json:"processing_time"` // Duration как строка
-	DataQuality    *DataQualityMetricsDTO  `json:"data_quality"`
+	ProcessingTime string                 `json:"processing_time"` // Duration как строка
+	DataQuality    *DataQualityMetricsDTO `json:"data_quality"`
 }
 
-// DataQualityMetricsDTO представляет метрики качества данных для HTTP ответа
+// DataQualityMetricsDTO представляет метрики качества данных для HTTP ответа.
 type DataQualityMetricsDTO struct {
-	TotalMeasurements     int64   `json:"total_measurements"`
-	ValidMeasurements     int64   `json:"valid_measurements"`
-	InvalidMeasurements   int64   `json:"invalid_measurements"`
-	QualityPercentage     float64 `json:"quality_percentage"`
-	MissingDataGaps       int64   `json:"missing_data_gaps"`
-	LargestGapDuration    string  `json:"largest_gap_duration"` // Duration как строка
-	AverageSamplingRate   float64 `json:"average_sampling_rate"`
+	TotalMeasurements   int64   `json:"total_measurements"`
+	ValidMeasurements   int64   `json:"valid_measurements"`
+	InvalidMeasurements int64   `json:"invalid_measurements"`
+	QualityPercentage   float64 `json:"quality_percentage"`
+	MissingDataGaps     int64   `json:"missing_data_gaps"`
+	LargestGapDuration  string  `json:"largest_gap_duration"` // Duration как строка
+	AverageSamplingRate float64 `json:"average_sampling_rate"`
 }
 
-// GetCompleteAnalysisResponse представляет HTTP ответ комплексного анализа
+// GetCompleteAnalysisResponse представляет HTTP ответ комплексного анализа.
 type GetCompleteAnalysisResponse struct {
 	Data    *CompleteAnalysisDataDTO `json:"data"`
 	Success bool                     `json:"success"`
@@ -80,7 +80,7 @@ type GetCompleteAnalysisResponse struct {
 // @Failure 401 {object} www.ErrorResponse
 // @Failure 403 {object} www.ErrorResponse
 // @Failure 500 {object} www.ErrorResponse
-// @Router /v1/rr-intervals/analytics/complete [get]
+// @Router /v1/rr-intervals/analytics/complete [get].
 func (r *RRIntervalsRouter) GetCompleteAnalysis(c *gin.Context) {
 	// Парсинг временных параметров
 	fromStr := c.Query("from")
@@ -90,6 +90,7 @@ func (r *RRIntervalsRouter) GetCompleteAnalysis(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "from and to parameters are required (RFC3339 format)",
 		})
+
 		return
 	}
 
@@ -98,6 +99,7 @@ func (r *RRIntervalsRouter) GetCompleteAnalysis(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid from time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -106,6 +108,7 @@ func (r *RRIntervalsRouter) GetCompleteAnalysis(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid to time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -115,6 +118,7 @@ func (r *RRIntervalsRouter) GetCompleteAnalysis(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
+
 		return
 	}
 
@@ -129,6 +133,7 @@ func (r *RRIntervalsRouter) GetCompleteAnalysis(c *gin.Context) {
 	response, err := r.rrIntervalsUsecase.GetCompleteAnalysis(c.Request.Context(), req)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -142,33 +147,33 @@ func (r *RRIntervalsRouter) GetCompleteAnalysis(c *gin.Context) {
 	c.JSON(http.StatusOK, responseDTO)
 }
 
-// parseCompleteAnalysisOptions парсит опции комплексного анализа из query параметров
+// parseCompleteAnalysisOptions парсит опции комплексного анализа из query параметров.
 func (r *RRIntervalsRouter) parseCompleteAnalysisOptions(c *gin.Context) (*models.CompleteAnalysisOptions, error) {
 	// Проверяем быстрый режим
 	quickMode := c.Query("quick") == "true"
-	
+
 	if quickMode {
 		// Быстрый режим - оптимизированные опции для дашбордов
 		return &models.CompleteAnalysisOptions{
-			AggregationIntervalMinutes:    10,    // Больший интервал
-			TrendWindowSizeMinutes:       30,    // Больше окно
-			HistogramBinsCount:           15,    // Меньше bins
-			DiffHistogramBinsCount:       15,    // Меньше bins
+			AggregationIntervalMinutes:    10, // Больший интервал
+			TrendWindowSizeMinutes:        30, // Больше окно
+			HistogramBinsCount:            15, // Меньше bins
+			DiffHistogramBinsCount:        15, // Меньше bins
 			EnableFrequencyDomainAnalysis: false,
-			IncludeRawData:               false, // Без сырых данных
-			MaxDataPoints:                1000,  // Меньше точек
+			IncludeRawData:                false, // Без сырых данных
+			MaxDataPoints:                 1000,  // Меньше точек
 		}, nil
 	}
 
 	// Парсинг индивидуальных параметров
 	options := &models.CompleteAnalysisOptions{
-		AggregationIntervalMinutes:    5,     // По умолчанию
-		TrendWindowSizeMinutes:       15,    // По умолчанию
-		HistogramBinsCount:           25,    // По умолчанию
-		DiffHistogramBinsCount:       20,    // По умолчанию
+		AggregationIntervalMinutes:    5,  // По умолчанию
+		TrendWindowSizeMinutes:        15, // По умолчанию
+		HistogramBinsCount:            25, // По умолчанию
+		DiffHistogramBinsCount:        20, // По умолчанию
 		EnableFrequencyDomainAnalysis: false,
-		IncludeRawData:               true,  // По умолчанию
-		MaxDataPoints:                10000, // По умолчанию
+		IncludeRawData:                true,  // По умолчанию
+		MaxDataPoints:                 10000, // По умолчанию
 	}
 
 	// Парсинг интервала агрегации
@@ -176,7 +181,7 @@ func (r *RRIntervalsRouter) parseCompleteAnalysisOptions(c *gin.Context) (*model
 		if val, err := strconv.Atoi(aggregationStr); err == nil {
 			options.AggregationIntervalMinutes = val
 		} else {
-			return nil, fmt.Errorf("invalid aggregation_interval parameter: %v", err)
+			return nil, fmt.Errorf("invalid aggregation_interval parameter: %w", err)
 		}
 	}
 
@@ -185,7 +190,7 @@ func (r *RRIntervalsRouter) parseCompleteAnalysisOptions(c *gin.Context) (*model
 		if val, err := strconv.Atoi(trendWindowStr); err == nil {
 			options.TrendWindowSizeMinutes = val
 		} else {
-			return nil, fmt.Errorf("invalid trend_window_size parameter: %v", err)
+			return nil, fmt.Errorf("invalid trend_window_size parameter: %w", err)
 		}
 	}
 
@@ -194,7 +199,7 @@ func (r *RRIntervalsRouter) parseCompleteAnalysisOptions(c *gin.Context) (*model
 		if val, err := strconv.Atoi(histogramBinsStr); err == nil {
 			options.HistogramBinsCount = val
 		} else {
-			return nil, fmt.Errorf("invalid histogram_bins parameter: %v", err)
+			return nil, fmt.Errorf("invalid histogram_bins parameter: %w", err)
 		}
 	}
 
@@ -203,7 +208,7 @@ func (r *RRIntervalsRouter) parseCompleteAnalysisOptions(c *gin.Context) (*model
 		if val, err := strconv.Atoi(diffHistogramBinsStr); err == nil {
 			options.DiffHistogramBinsCount = val
 		} else {
-			return nil, fmt.Errorf("invalid diff_histogram_bins parameter: %v", err)
+			return nil, fmt.Errorf("invalid diff_histogram_bins parameter: %w", err)
 		}
 	}
 
@@ -217,14 +222,14 @@ func (r *RRIntervalsRouter) parseCompleteAnalysisOptions(c *gin.Context) (*model
 		if val, err := strconv.Atoi(maxDataPointsStr); err == nil {
 			options.MaxDataPoints = val
 		} else {
-			return nil, fmt.Errorf("invalid max_data_points parameter: %v", err)
+			return nil, fmt.Errorf("invalid max_data_points parameter: %w", err)
 		}
 	}
 
 	return options, nil
 }
 
-// toCompleteAnalysisDataDTO преобразует CompleteAnalysisData в DTO
+// toCompleteAnalysisDataDTO преобразует CompleteAnalysisData в DTO.
 func toCompleteAnalysisDataDTO(data *models.CompleteAnalysisData) *CompleteAnalysisDataDTO {
 	if data == nil {
 		return nil
@@ -255,19 +260,19 @@ func toCompleteAnalysisDataDTO(data *models.CompleteAnalysisData) *CompleteAnaly
 	return dto
 }
 
-// toDataQualityMetricsDTO преобразует DataQualityMetrics в DTO
+// toDataQualityMetricsDTO преобразует DataQualityMetrics в DTO.
 func toDataQualityMetricsDTO(metrics *models.DataQualityMetrics) *DataQualityMetricsDTO {
 	if metrics == nil {
 		return nil
 	}
 
 	return &DataQualityMetricsDTO{
-		TotalMeasurements:     metrics.TotalMeasurements,
-		ValidMeasurements:     metrics.ValidMeasurements,
-		InvalidMeasurements:   metrics.InvalidMeasurements,
-		QualityPercentage:     metrics.QualityPercentage,
-		MissingDataGaps:       metrics.MissingDataGaps,
-		LargestGapDuration:    metrics.LargestGapDuration.String(),
-		AverageSamplingRate:   metrics.AverageSamplingRate,
+		TotalMeasurements:   metrics.TotalMeasurements,
+		ValidMeasurements:   metrics.ValidMeasurements,
+		InvalidMeasurements: metrics.InvalidMeasurements,
+		QualityPercentage:   metrics.QualityPercentage,
+		MissingDataGaps:     metrics.MissingDataGaps,
+		LargestGapDuration:  metrics.LargestGapDuration.String(),
+		AverageSamplingRate: metrics.AverageSamplingRate,
 	}
-} 
+}

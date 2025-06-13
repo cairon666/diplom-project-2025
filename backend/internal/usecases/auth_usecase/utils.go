@@ -29,18 +29,21 @@ func (authUsecase *AuthUsecase) createPartialUserAndCreateTempId(ctx context.Con
 
 	if err := authUsecase.userService.CreateUser(ctx, user); err != nil {
 		authUsecase.logger.Error("failed to create user", logger.Error(err))
+
 		return uuid.Nil, apperrors.InternalError()
 	}
 
 	authProvider := models.NewAuthProvider(uuid.New(), userId, models.TelegramProviderName, req.Id, createdAt)
 	if err := authUsecase.authService.CreateUserAuthProvider(ctx, authProvider); err != nil {
 		authUsecase.logger.Error("failed to create auth provider", logger.Error(err))
+
 		return uuid.Nil, apperrors.InternalError()
 	}
 
 	tempId, err := authUsecase.authService.GenerateTempIDToCompleteRegistration(ctx, userId)
 	if err != nil {
 		authUsecase.logger.Error("failed to generate temp id", logger.Error(err))
+
 		return uuid.Nil, apperrors.InternalError()
 	}
 
@@ -51,6 +54,7 @@ func (authUsecase *AuthUsecase) generateTempIdAndReturnErrorNeedEndRegistration(
 	tempId, err := authUsecase.authService.GenerateTempIDToCompleteRegistration(ctx, userId)
 	if err != nil {
 		authUsecase.logger.Error("failed to generate temp id", logger.Error(err))
+
 		return apperrors.InternalError()
 	}
 

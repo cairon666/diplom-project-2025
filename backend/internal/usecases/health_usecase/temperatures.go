@@ -15,18 +15,18 @@ import (
 // DTO для CreateTemperature
 
 type CreateTemperatureRequest struct {
-	ID                uuid.UUID
+	ID                 uuid.UUID
 	TemperatureCelsius float64
-	DeviceID          *uuid.UUID
-	CreatedAt         time.Time
+	DeviceID           *uuid.UUID
+	CreatedAt          time.Time
 }
 
 func NewCreateTemperatureRequest(id uuid.UUID, temperatureCelsius float64, deviceID *uuid.UUID, createdAt time.Time) CreateTemperatureRequest {
 	return CreateTemperatureRequest{
-		ID:                id,
+		ID:                 id,
 		TemperatureCelsius: temperatureCelsius,
-		DeviceID:          deviceID,
-		CreatedAt:         createdAt,
+		DeviceID:           deviceID,
+		CreatedAt:          createdAt,
 	}
 }
 
@@ -100,7 +100,7 @@ type GetDailyTemperatureAvgResponse struct {
 	Temperatures map[time.Time]float64
 }
 
-// CreateTemperature создает запись о температуре
+// CreateTemperature создает запись о температуре.
 func (u *HealthUsecase) CreateTemperature(ctx context.Context, dto CreateTemperatureRequest) (CreateTemperatureResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -117,13 +117,14 @@ func (u *HealthUsecase) CreateTemperature(ctx context.Context, dto CreateTempera
 	err := u.healthService.CreateTemperature(ctx, temperature)
 	if err != nil {
 		u.logger.Error("failed to create temperature", logger.Error(err))
+
 		return CreateTemperatureResponse{}, err
 	}
 
 	return CreateTemperatureResponse{}, nil
 }
 
-// CreateTemperatures создает множественные записи о температуре
+// CreateTemperatures создает множественные записи о температуре.
 func (u *HealthUsecase) CreateTemperatures(ctx context.Context, dto CreateTemperaturesRequest) (CreateTemperaturesResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -143,13 +144,14 @@ func (u *HealthUsecase) CreateTemperatures(ctx context.Context, dto CreateTemper
 	err := u.healthService.CreateTemperatures(ctx, temperatures)
 	if err != nil {
 		u.logger.Error("failed to create temperatures", logger.Error(err))
+
 		return CreateTemperaturesResponse{}, err
 	}
 
 	return CreateTemperaturesResponse{}, nil
 }
 
-// GetTemperatures получает сырые данные о температуре
+// GetTemperatures получает сырые данные о температуре.
 func (u *HealthUsecase) GetTemperatures(ctx context.Context, dto GetTemperaturesRequest) (GetTemperaturesResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -160,13 +162,14 @@ func (u *HealthUsecase) GetTemperatures(ctx context.Context, dto GetTemperatures
 	temperatures, err := u.healthService.GetTemperatures(ctx, authClaims.UserID, dto.From, dto.To)
 	if err != nil {
 		u.logger.Error("failed to get temperatures", logger.Error(err))
+
 		return GetTemperaturesResponse{}, err
 	}
 
 	return GetTemperaturesResponse{Temperatures: temperatures}, nil
 }
 
-// GetHourlyTemperatureAvg получает среднюю температуру по часам
+// GetHourlyTemperatureAvg получает среднюю температуру по часам.
 func (u *HealthUsecase) GetHourlyTemperatureAvg(ctx context.Context, dto GetHourlyTemperatureAvgRequest) (GetHourlyTemperatureAvgResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -177,13 +180,14 @@ func (u *HealthUsecase) GetHourlyTemperatureAvg(ctx context.Context, dto GetHour
 	temperatures, err := u.aggregationService.GetHourlyTemperatureAvg(ctx, authClaims.UserID, dto.From, dto.To)
 	if err != nil {
 		u.logger.Error("failed to get hourly temperature avg", logger.Error(err))
+
 		return GetHourlyTemperatureAvgResponse{}, err
 	}
 
 	return GetHourlyTemperatureAvgResponse{Temperatures: temperatures}, nil
 }
 
-// GetDailyTemperatureAvg получает среднюю температуру по дням
+// GetDailyTemperatureAvg получает среднюю температуру по дням.
 func (u *HealthUsecase) GetDailyTemperatureAvg(ctx context.Context, dto GetDailyTemperatureAvgRequest) (GetDailyTemperatureAvgResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -194,8 +198,9 @@ func (u *HealthUsecase) GetDailyTemperatureAvg(ctx context.Context, dto GetDaily
 	temperatures, err := u.aggregationService.GetDailyTemperatureAvg(ctx, authClaims.UserID, dto.From, dto.To)
 	if err != nil {
 		u.logger.Error("failed to get daily temperature avg", logger.Error(err))
+
 		return GetDailyTemperatureAvgResponse{}, err
 	}
 
 	return GetDailyTemperatureAvgResponse{Temperatures: temperatures}, nil
-} 
+}

@@ -12,14 +12,14 @@ import (
 	"github.com/google/uuid"
 )
 
-// RRIntervalCreateData представляет данные для создания R-R интервала
+// RRIntervalCreateData представляет данные для создания R-R интервала.
 type RRIntervalCreateData struct {
 	DeviceID     uuid.UUID
 	RRIntervalMs int64
 	Timestamp    *time.Time
 }
 
-// RRIntervalResponseData представляет данные R-R интервала для ответа
+// RRIntervalResponseData представляет данные R-R интервала для ответа.
 type RRIntervalResponseData struct {
 	ID           string
 	UserID       string
@@ -30,7 +30,7 @@ type RRIntervalResponseData struct {
 	IsValid      bool
 }
 
-// ToRRInterval конвертирует данные в модель R-R интервала
+// ToRRInterval конвертирует данные в модель R-R интервала.
 func (data RRIntervalCreateData) ToRRInterval(userID uuid.UUID) models.RRInterval {
 	timestamp := time.Now()
 	if data.Timestamp != nil {
@@ -40,7 +40,7 @@ func (data RRIntervalCreateData) ToRRInterval(userID uuid.UUID) models.RRInterva
 	return models.NewRRInterval(uuid.New(), userID, data.DeviceID, data.RRIntervalMs, timestamp)
 }
 
-// FromRRInterval создает данные ответа из модели R-R интервала
+// FromRRInterval создает данные ответа из модели R-R интервала.
 func FromRRInterval(rr models.RRInterval) RRIntervalResponseData {
 	return RRIntervalResponseData{
 		ID:           rr.ID.String(),
@@ -53,7 +53,7 @@ func FromRRInterval(rr models.RRInterval) RRIntervalResponseData {
 	}
 }
 
-// CreateBatchRRIntervalsRequest представляет запрос на создание batch R-R интервалов
+// CreateBatchRRIntervalsRequest представляет запрос на создание batch R-R интервалов.
 type CreateBatchRRIntervalsRequest struct {
 	DeviceID  uuid.UUID
 	Intervals []RRIntervalCreateData
@@ -66,7 +66,7 @@ func NewCreateBatchRRIntervalsRequest(deviceID uuid.UUID, intervals []RRInterval
 	}
 }
 
-// CreateBatchRRIntervalsResponse представляет ответ на создание batch R-R интервалов
+// CreateBatchRRIntervalsResponse представляет ответ на создание batch R-R интервалов.
 type CreateBatchRRIntervalsResponse struct {
 	ProcessedCount int
 	ValidCount     int
@@ -86,6 +86,7 @@ func (uc *RRIntervalsUsecase) CreateBatchRRIntervals(ctx context.Context, req Cr
 		uc.logger.Error("failed to get device for RR intervals batch",
 			logger.String("device_id", req.DeviceID.String()),
 			logger.Error(err))
+
 		return CreateBatchRRIntervalsResponse{}, apperrors.DeviceNotFoundf("device not found: %v", err)
 	}
 
@@ -95,6 +96,7 @@ func (uc *RRIntervalsUsecase) CreateBatchRRIntervals(ctx context.Context, req Cr
 			logger.String("user_id", authClaims.UserID.String()),
 			logger.String("device_id", req.DeviceID.String()),
 			logger.String("device_owner", device.UserID.String()))
+
 		return CreateBatchRRIntervalsResponse{}, apperrors.DeviceAccessDenied()
 	}
 
@@ -122,6 +124,7 @@ func (uc *RRIntervalsUsecase) CreateBatchRRIntervals(ctx context.Context, req Cr
 				logger.String("batch_device_id", req.DeviceID.String()),
 				logger.String("interval_device_id", intervalData.DeviceID.String()))
 			invalidCount++
+
 			continue // Пропускаем некорректные интервалы
 		}
 
@@ -130,6 +133,7 @@ func (uc *RRIntervalsUsecase) CreateBatchRRIntervals(ctx context.Context, req Cr
 			uc.logger.Warn("invalid RR interval value",
 				logger.Int64("rr_interval_ms", intervalData.RRIntervalMs))
 			invalidCount++
+
 			continue
 		}
 
@@ -157,6 +161,7 @@ func (uc *RRIntervalsUsecase) CreateBatchRRIntervals(ctx context.Context, req Cr
 			logger.String("device_id", req.DeviceID.String()),
 			logger.Int("intervals_count", len(rrIntervals)),
 			logger.Error(err))
+
 		return CreateBatchRRIntervalsResponse{}, apperrors.DataProcessingErrorf("failed to save RR intervals: %v", err)
 	}
 

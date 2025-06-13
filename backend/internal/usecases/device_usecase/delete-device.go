@@ -29,6 +29,7 @@ func (du *DeviceUsecase) DeleteDevice(ctx context.Context, req DeleteDeviceReque
 	device, err := du.deviceService.GetByID(ctx, req.ID)
 	if err != nil {
 		du.logger.Error("failed to get device", logger.Error(err))
+
 		return err
 	}
 
@@ -38,6 +39,7 @@ func (du *DeviceUsecase) DeleteDevice(ctx context.Context, req DeleteDeviceReque
 
 	if err := du.deviceService.Delete(ctx, req.ID); err != nil {
 		du.logger.Error("failed to delete device", logger.Error(err))
+
 		return err
 	}
 

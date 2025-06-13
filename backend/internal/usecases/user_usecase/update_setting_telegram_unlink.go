@@ -20,11 +20,13 @@ func (userUsecase *UserUsecase) UpdateSettingTelegramUnlink(ctx context.Context)
 		return apperrors.TelegramIsNotLinked()
 	} else if err != nil {
 		userUsecase.logger.Error("failed to get auth provider", logger.Error(err))
+
 		return apperrors.InternalError()
 	}
 
 	if err := userUsecase.authService.DeleteAuthProviderById(ctx, currentAuthProvider.ID); err != nil {
 		userUsecase.logger.Error("failed to delete auth provider", logger.Error(err))
+
 		return apperrors.InternalError()
 	}
 

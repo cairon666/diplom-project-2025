@@ -15,6 +15,7 @@ func (r *AuthRouter) RefreshRoute(c *gin.Context) {
 	refreshToken, err := r.jwtService.GetRefreshCookie(c)
 	if err != nil {
 		c.Status(http.StatusUnauthorized)
+
 		return
 	}
 
@@ -22,6 +23,7 @@ func (r *AuthRouter) RefreshRoute(c *gin.Context) {
 	resp, err := r.authUsecase.RefreshToken(c, reqDTO)
 	if err != nil {
 		c.Status(http.StatusUnauthorized)
+
 		return
 	}
 

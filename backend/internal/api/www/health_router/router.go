@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// HealthUsecase определяет интерфейс для usecase здоровья
+// HealthUsecase определяет интерфейс для usecase здоровья.
 type HealthUsecase interface {
 	// Steps
 	CreateStep(ctx context.Context, dto health_usecase.CreateStepRequest) (health_usecase.CreateStepResponse, error)
@@ -38,13 +38,13 @@ type HealthUsecase interface {
 	GetDailySleepDuration(ctx context.Context, dto health_usecase.GetDailySleepDurationRequest) (health_usecase.GetDailySleepDurationResponse, error)
 }
 
-// HealthRouter реализует роутер для эндпоинтов здоровья
+// HealthRouter реализует роутер для эндпоинтов здоровья.
 type HealthRouter struct {
 	healthUsecase   HealthUsecase
 	identityService *indentity.IdentityService
 }
 
-// NewHealthRouter создает новый экземпляр роутера здоровья
+// NewHealthRouter создает новый экземпляр роутера здоровья.
 func NewHealthRouter(healthUsecase HealthUsecase, identityService *indentity.IdentityService) www.Router {
 	return &HealthRouter{
 		healthUsecase:   healthUsecase,
@@ -52,7 +52,7 @@ func NewHealthRouter(healthUsecase HealthUsecase, identityService *indentity.Ide
 	}
 }
 
-// Register регистрирует маршруты здоровья
+// Register регистрирует маршруты здоровья.
 func (r *HealthRouter) Register(router gin.IRouter) {
 	healthGroup := router.Group("/v1/health")
 	healthGroup.Use(r.identityService.AuthMiddleware())

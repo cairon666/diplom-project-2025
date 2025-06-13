@@ -11,14 +11,13 @@ import (
 	"github.com/google/uuid"
 )
 
-// GetStatisticalSummary получает базовую статистику R-R интервалов
+// GetStatisticalSummary получает базовую статистику R-R интервалов.
 func (r *RRIntervalsRepo) GetStatisticalSummary(ctx context.Context, userID uuid.UUID, from, to time.Time) (*models.RRStatisticalSummary, error) {
 	// Всегда используем сырые данные - просто и надежно
 	return r.getStatisticsFromRawData(ctx, userID, from, to)
 }
 
-
-// getStatisticsFromRawData - fallback метод для исходных данных (медленно, но всегда работает)
+// getStatisticsFromRawData - fallback метод для исходных данных (медленно, но всегда работает).
 func (r *RRIntervalsRepo) getStatisticsFromRawData(ctx context.Context, userID uuid.UUID, from, to time.Time) (*models.RRStatisticalSummary, error) {
 	// Упрощенный запрос - сначала получаем все данные и считаем статистику в Go
 	query := fmt.Sprintf(`
@@ -43,7 +42,7 @@ func (r *RRIntervalsRepo) getStatisticsFromRawData(ctx context.Context, userID u
 	var values []float64
 	for result.Next() {
 		record := result.Record()
-		
+
 		// Извлекаем значение R-R интервала
 		rrIntervalMs, ok := record.Value().(float64)
 		if !ok {
@@ -53,7 +52,7 @@ func (r *RRIntervalsRepo) getStatisticsFromRawData(ctx context.Context, userID u
 				continue
 			}
 		}
-		
+
 		values = append(values, rrIntervalMs)
 	}
 
@@ -65,7 +64,7 @@ func (r *RRIntervalsRepo) getStatisticsFromRawData(ctx context.Context, userID u
 	return r.calculateStatistics(values), nil
 }
 
-// calculateStatistics вычисляет статистику из массива значений R-R интервалов
+// calculateStatistics вычисляет статистику из массива значений R-R интервалов.
 func (r *RRIntervalsRepo) calculateStatistics(values []float64) *models.RRStatisticalSummary {
 	if len(values) == 0 {
 		return &models.RRStatisticalSummary{
@@ -79,12 +78,12 @@ func (r *RRIntervalsRepo) calculateStatistics(values []float64) *models.RRStatis
 
 	// Подсчет количества
 	count := int64(len(values))
-	
+
 	// Поиск минимума и максимума
 	min := values[0]
 	max := values[0]
 	sum := 0.0
-	
+
 	for _, value := range values {
 		sum += value
 		if value < min {
@@ -94,10 +93,10 @@ func (r *RRIntervalsRepo) calculateStatistics(values []float64) *models.RRStatis
 			max = value
 		}
 	}
-	
+
 	// Среднее значение
 	mean := sum / float64(len(values))
-	
+
 	// Стандартное отклонение
 	var stdDev float64
 	if len(values) > 1 {
@@ -121,4 +120,4 @@ func (r *RRIntervalsRepo) calculateStatistics(values []float64) *models.RRStatis
 		Max:    int64(max),
 		Count:  count,
 	}
-} 
+}

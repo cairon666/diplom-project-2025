@@ -19,6 +19,7 @@ func (r *UserRouter) GetSetting(c *gin.Context) {
 	resp, err := r.userUsecase.GetSetting(c.Request.Context())
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

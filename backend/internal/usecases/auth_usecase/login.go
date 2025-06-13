@@ -42,6 +42,7 @@ func (authUsecase *AuthUsecase) Login(ctx context.Context, loginReq LoginRequest
 		}
 
 		authUsecase.logger.Error("failed to get user by email", logger.Error(err))
+
 		return LoginResponse{}, apperrors.InternalError()
 	}
 
@@ -51,6 +52,7 @@ func (authUsecase *AuthUsecase) Login(ctx context.Context, loginReq LoginRequest
 		return LoginResponse{}, apperrors.WrongPassword()
 	} else if err != nil {
 		authUsecase.logger.Error("failed to get user password", logger.Error(err))
+
 		return LoginResponse{}, apperrors.InternalError()
 	}
 
@@ -64,6 +66,7 @@ func (authUsecase *AuthUsecase) Login(ctx context.Context, loginReq LoginRequest
 			logger.String("user_id", user.ID.String()),
 			logger.String("email", user.Email),
 			logger.Error(err))
+
 		return LoginResponse{}, apperrors.InternalErrorf("failed to generate jwt: %v", err)
 	}
 

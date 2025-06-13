@@ -55,7 +55,7 @@ func NewDev() (*Logger, error) {
 	}, err
 }
 
-// Основные методы логирования
+// Основные методы логирования.
 func (l *Logger) Info(msg string, fields ...Field) {
 	l.l.Info(msg, fields...)
 }
@@ -80,7 +80,7 @@ func (l *Logger) Panic(msg string, fields ...Field) {
 	l.l.Panic(msg, fields...)
 }
 
-// Методы для работы с полями и контекстом
+// Методы для работы с полями и контекстом.
 func (l *Logger) With(fields ...Field) ILogger {
 	return &Logger{
 		l: l.l.With(fields...),
@@ -93,7 +93,7 @@ func (l *Logger) WithContext(ctx context.Context) ILogger {
 	return l // Для базовой реализации возвращаем тот же логгер
 }
 
-// Методы для работы с контекстом
+// InfoContext Методы для работы с контекстом.
 func (l *Logger) InfoContext(ctx context.Context, msg string, fields ...Field) {
 	l.l.Info(msg, fields...)
 }
@@ -110,7 +110,7 @@ func (l *Logger) WarnContext(ctx context.Context, msg string, fields ...Field) {
 	l.l.Warn(msg, fields...)
 }
 
-// Убеждаемся, что Logger реализует все интерфейсы
+// Убеждаемся, что Logger реализует все интерфейсы.
 var (
 	_ ILogger       = (*Logger)(nil)
 	_ FieldLogger   = (*Logger)(nil)
