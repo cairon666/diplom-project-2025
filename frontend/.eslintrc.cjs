@@ -46,6 +46,7 @@ const config = {
         'import/order': 'off',
         'react/jsx-props-no-spreading': 'off',
     },
+    ignorePatterns: ['tsconfig*.json', 'dist/', 'node_modules/'],
 };
 
 module.exports = config;
