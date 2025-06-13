@@ -28,6 +28,7 @@ func (a *AuthProvidersRepo) GetAuthProviderById(ctx context.Context, id uuid.UUI
 		if errors.Is(err, pgx.ErrNoRows) {
 			return models.AuthProvider{}, apperrors.NotFound()
 		}
+
 		return models.AuthProvider{}, err
 	}
 
@@ -46,6 +47,7 @@ func (a *AuthProvidersRepo) GetAuthProvidersByUserId(ctx context.Context, userId
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, apperrors.NotFound()
 		}
+
 		return nil, err
 	}
 
@@ -78,6 +80,7 @@ func (a *AuthProvidersRepo) GetAuthProviderByUserIdAndProviderName(ctx context.C
 		if errors.Is(err, pgx.ErrNoRows) {
 			return models.AuthProvider{}, apperrors.NotFound()
 		}
+
 		return models.AuthProvider{}, err
 	}
 
@@ -99,6 +102,7 @@ func (a *AuthProvidersRepo) GetAuthProviderByProviderUserIdAndProviderName(ctx c
 		if errors.Is(err, pgx.ErrNoRows) {
 			return models.AuthProvider{}, apperrors.NotFound()
 		}
+
 		return models.AuthProvider{}, err
 	}
 
@@ -122,15 +126,16 @@ func (a *AuthProvidersRepo) CreateAuthProvider(ctx context.Context, authProvider
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
-			switch {
-			case pgErr.ConstraintName == "AUTH_PROVIDERS_PROVIDER_USER_ID_UNIQUE":
+			switch pgErr.ConstraintName {
+			case "AUTH_PROVIDERS_PROVIDER_USER_ID_UNIQUE":
 				return apperrors.ProviderAccountAlreadyLinked()
-			case pgErr.ConstraintName == "AUTH_PROVIDERS_USER_ID_PROVIDER_NAME_UNIQUE":
+			case "AUTH_PROVIDERS_USER_ID_PROVIDER_NAME_UNIQUE":
 				return apperrors.ProviderAlreadyConnected()
 			default:
 				return err
 			}
 		}
+
 		return err
 	}
 
@@ -142,6 +147,7 @@ func (a *AuthProvidersRepo) DeleteAuthProviderById(ctx context.Context, id uuid.
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -150,5 +156,6 @@ func (a *AuthProvidersRepo) DeleteAuthProviderByUserId(ctx context.Context, user
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

@@ -34,6 +34,6 @@ func (r *ExternalAppsRouter) Register(router gin.IRouter) {
 	group.POST("/user/external-apps", r.CreateExternalApp)
 	group.DELETE("/user/external-apps/:id", r.DeleteExternalApp)
 
-	//group.GET("/user/external-apps/:id", nil)
-	//group.PATCH("/user/external-apps/:id", nil)
+	// group.GET("/user/external-apps/:id", nil)
+	// group.PATCH("/user/external-apps/:id", nil)
 }

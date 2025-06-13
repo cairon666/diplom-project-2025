@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// GetRRIntervalsRequest представляет запрос на получение R-R интервалов
+// GetRRIntervalsRequest представляет запрос на получение R-R интервалов.
 type GetRRIntervalsRequest struct {
 	DeviceID *uuid.UUID
 	From     time.Time
@@ -26,12 +26,12 @@ func NewGetRRIntervalsRequest(deviceID *uuid.UUID, from, to time.Time) GetRRInte
 	}
 }
 
-// GetRRIntervalsResponse представляет ответ с R-R интервалами
+// GetRRIntervalsResponse представляет ответ с R-R интервалами.
 type GetRRIntervalsResponse struct {
-	Intervals   []RRIntervalResponseData
-	TotalCount  int
-	ValidCount  int
-	TimeRange   TimeRange
+	Intervals  []RRIntervalResponseData
+	TotalCount int
+	ValidCount int
+	TimeRange  TimeRange
 }
 
 type TimeRange struct {
@@ -67,6 +67,7 @@ func (uc *RRIntervalsUsecase) GetRRIntervals(ctx context.Context, req GetRRInter
 			uc.logger.Error("failed to get device for RR intervals query",
 				logger.String("device_id", req.DeviceID.String()),
 				logger.Error(err))
+
 			return GetRRIntervalsResponse{}, apperrors.DeviceNotFoundf("device not found: %v", err)
 		}
 
@@ -75,6 +76,7 @@ func (uc *RRIntervalsUsecase) GetRRIntervals(ctx context.Context, req GetRRInter
 				logger.String("user_id", authClaims.UserID.String()),
 				logger.String("device_id", req.DeviceID.String()),
 				logger.String("device_owner", device.UserID.String()))
+
 			return GetRRIntervalsResponse{}, apperrors.DeviceAccessDenied()
 		}
 
@@ -84,6 +86,7 @@ func (uc *RRIntervalsUsecase) GetRRIntervals(ctx context.Context, req GetRRInter
 			uc.logger.Error("failed to get RR intervals by device",
 				logger.String("device_id", req.DeviceID.String()),
 				logger.Error(err))
+
 			return GetRRIntervalsResponse{}, apperrors.DataProcessingErrorf("failed to get RR intervals: %v", err)
 		}
 
@@ -97,6 +100,7 @@ func (uc *RRIntervalsUsecase) GetRRIntervals(ctx context.Context, req GetRRInter
 			uc.logger.Error("failed to get RR intervals by user",
 				logger.String("user_id", authClaims.UserID.String()),
 				logger.Error(err))
+
 			return GetRRIntervalsResponse{}, apperrors.DataProcessingErrorf("failed to get RR intervals: %v", err)
 		}
 
@@ -116,12 +120,12 @@ func (uc *RRIntervalsUsecase) GetRRIntervals(ctx context.Context, req GetRRInter
 	}
 
 	return GetRRIntervalsResponse{
-		Intervals:   rrIntervals,
-		TotalCount:  totalCount,
-		ValidCount:  validCount,
+		Intervals:  rrIntervals,
+		TotalCount: totalCount,
+		ValidCount: validCount,
 		TimeRange: TimeRange{
 			From: req.From,
 			To:   req.To,
 		},
 	}, nil
-} 
+}

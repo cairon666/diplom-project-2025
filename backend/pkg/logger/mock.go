@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-// MockLogger - mock для тестирования с возможностью проверки вызовов
+// MockLogger - mock для тестирования с возможностью проверки вызовов.
 type MockLogger struct {
 	mu    sync.RWMutex
 	calls []LogCall
@@ -75,11 +75,11 @@ func (m *MockLogger) WarnContext(ctx context.Context, msg string, fields ...Fiel
 	m.addCall("WARN", msg, fields, ctx)
 }
 
-// Вспомогательные методы для тестирования
+// Вспомогательные методы для тестирования.
 func (m *MockLogger) addCall(level, msg string, fields []Field, ctx context.Context) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	
+
 	m.calls = append(m.calls, LogCall{
 		Level:   level,
 		Message: msg,
@@ -91,50 +91,55 @@ func (m *MockLogger) addCall(level, msg string, fields []Field, ctx context.Cont
 func (m *MockLogger) GetCalls() []LogCall {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	
+
 	calls := make([]LogCall, len(m.calls))
 	copy(calls, m.calls)
+
 	return calls
 }
 
 func (m *MockLogger) GetLastCall() *LogCall {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	
+
 	if len(m.calls) == 0 {
 		return nil
 	}
+
 	return &m.calls[len(m.calls)-1]
 }
 
 func (m *MockLogger) GetCallsCount() int {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
+
 	return len(m.calls)
 }
 
 func (m *MockLogger) GetCallsByLevel(level string) []LogCall {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	
+
 	var result []LogCall
 	for _, call := range m.calls {
 		if call.Level == level {
 			result = append(result, call)
 		}
 	}
+
 	return result
 }
 
 func (m *MockLogger) HasCallWithMessage(msg string) bool {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	
+
 	for _, call := range m.calls {
 		if call.Message == msg {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -147,18 +152,19 @@ func (m *MockLogger) Clear() {
 func (m *MockLogger) String() string {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	
+
 	result := fmt.Sprintf("MockLogger with %d calls:\n", len(m.calls))
 	for i, call := range m.calls {
-		result += fmt.Sprintf("  %d. [%s] %s (fields: %d)\n", 
+		result += fmt.Sprintf("  %d. [%s] %s (fields: %d)\n",
 			i+1, call.Level, call.Message, len(call.Fields))
 	}
+
 	return result
 }
 
-// Убеждаемся, что MockLogger реализует все интерфейсы
+// Убеждаемся, что MockLogger реализует все интерфейсы.
 var (
 	_ ILogger       = (*MockLogger)(nil)
 	_ FieldLogger   = (*MockLogger)(nil)
 	_ ContextLogger = (*MockLogger)(nil)
-) 
+)

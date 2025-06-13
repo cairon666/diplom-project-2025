@@ -39,6 +39,7 @@ func (ud *DeviceUsecase) CreateDevice(ctx context.Context, dto CreateDeviceReque
 	device := models.NewDevice(id, authClaims.UserID, dto.DeviceName, time.Now())
 	if err := ud.deviceService.Create(ctx, device); err != nil {
 		ud.logger.Error("failed to create device", logger.Error(err))
+
 		return CreateDeviceResponse{}, err
 	}
 

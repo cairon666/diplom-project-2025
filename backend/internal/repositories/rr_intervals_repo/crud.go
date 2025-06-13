@@ -11,14 +11,14 @@ import (
 	"github.com/influxdata/influxdb-client-go/v2/api/write"
 )
 
-// CreateBatch создает несколько R-R интервалов одновременно
+// CreateBatch создает несколько R-R интервалов одновременно.
 func (r *RRIntervalsRepo) CreateBatch(ctx context.Context, rrIntervals []models.RRInterval) error {
 	if len(rrIntervals) == 0 {
 		return apperrors.BatchEmpty()
 	}
 
 	writeAPI := r.influxClient.WriteAPIBlocking(r.org, r.bucket)
-	
+
 	// Записываем точки по одной в рамках одного batch
 	for _, rrInterval := range rrIntervals {
 		// Создаем теги для идентификации записи
@@ -35,7 +35,7 @@ func (r *RRIntervalsRepo) CreateBatch(ctx context.Context, rrIntervals []models.
 
 		// Создаем точку с наносекундной точностью времени
 		point := write.NewPoint("rr_intervals", tags, fields, rrInterval.CreatedAt)
-		
+
 		// Записываем точку
 		if err := writeAPI.WritePoint(ctx, point); err != nil {
 			return apperrors.DataProcessingErrorf("failed to write RR interval: %v", err)
@@ -45,7 +45,7 @@ func (r *RRIntervalsRepo) CreateBatch(ctx context.Context, rrIntervals []models.
 	return nil
 }
 
-// GetByUserID получает R-R интервалы пользователя за указанный период
+// GetByUserID получает R-R интервалы пользователя за указанный период.
 func (r *RRIntervalsRepo) GetByUserID(ctx context.Context, userID uuid.UUID, from, to time.Time) ([]models.RRInterval, error) {
 	if from.After(to) {
 		return nil, apperrors.InvalidTimeRangef("from time (%v) cannot be after to time (%v)", from, to)
@@ -117,7 +117,7 @@ func (r *RRIntervalsRepo) GetByUserID(ctx context.Context, userID uuid.UUID, fro
 	return rrIntervals, nil
 }
 
-// GetByDeviceID получает R-R интервалы устройства за указанный период
+// GetByDeviceID получает R-R интервалы устройства за указанный период.
 func (r *RRIntervalsRepo) GetByDeviceID(ctx context.Context, deviceID uuid.UUID, from, to time.Time) ([]models.RRInterval, error) {
 	if from.After(to) {
 		return nil, apperrors.InvalidTimeRangef("from time (%v) cannot be after to time (%v)", from, to)
@@ -187,4 +187,4 @@ func (r *RRIntervalsRepo) GetByDeviceID(ctx context.Context, deviceID uuid.UUID,
 	}
 
 	return rrIntervals, nil
-} 
+}

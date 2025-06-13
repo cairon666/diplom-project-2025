@@ -26,6 +26,7 @@ func (userUsecase *UserUsecase) GetSetting(ctx context.Context) (GetSettingRespo
 	user, err := userUsecase.userService.GetUserById(ctx, authClaims.UserID)
 	if err != nil {
 		userUsecase.logger.Error("failed to get user by id", logger.Error(err))
+
 		return GetSettingResponse{}, err
 	}
 
@@ -40,6 +41,7 @@ func (userUsecase *UserUsecase) GetSetting(ctx context.Context) (GetSettingRespo
 		resDto.HasPassword = false
 	} else if err != nil {
 		userUsecase.logger.Error("failed to get user password by id", logger.Error(err))
+
 		return GetSettingResponse{}, err
 	} else {
 		resDto.HasPassword = true
@@ -50,12 +52,14 @@ func (userUsecase *UserUsecase) GetSetting(ctx context.Context) (GetSettingRespo
 		resDto.HasTelegram = false
 	} else if err != nil {
 		userUsecase.logger.Error("failed to get user auth providers by id", logger.Error(err))
+
 		return GetSettingResponse{}, err
 	}
 
 	for _, authProvider := range authProviders {
 		if authProvider.ProviderName == models.TelegramProviderName {
 			resDto.HasTelegram = true
+
 			break
 		}
 	}

@@ -13,15 +13,16 @@ import (
 	"github.com/google/uuid"
 )
 
-// isEmptyRangeError проверяет, является ли ошибка связанной с пустым диапазоном времени
+// isEmptyRangeError проверяет, является ли ошибка связанной с пустым диапазоном времени.
 func isEmptyRangeError(err error) bool {
 	if err == nil {
 		return false
 	}
 	errMsg := strings.ToLower(err.Error())
-	return strings.Contains(errMsg, "empty range") || 
-		   strings.Contains(errMsg, "cannot query an empty range") ||
-		   strings.Contains(errMsg, "invalid range")
+
+	return strings.Contains(errMsg, "empty range") ||
+		strings.Contains(errMsg, "cannot query an empty range") ||
+		strings.Contains(errMsg, "invalid range")
 }
 
 // DTO для CreateStep
@@ -112,7 +113,7 @@ type GetDailyStepsResponse struct {
 	Steps map[time.Time]int64
 }
 
-// CreateStep создает запись о шагах
+// CreateStep создает запись о шагах.
 func (u *HealthUsecase) CreateStep(ctx context.Context, dto CreateStepRequest) (CreateStepResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -129,13 +130,14 @@ func (u *HealthUsecase) CreateStep(ctx context.Context, dto CreateStepRequest) (
 	err := u.healthService.CreateStep(ctx, step)
 	if err != nil {
 		u.logger.Error("failed to create step", logger.Error(err))
+
 		return CreateStepResponse{}, err
 	}
 
 	return CreateStepResponse{}, nil
 }
 
-// CreateSteps создает множественные записи о шагах
+// CreateSteps создает множественные записи о шагах.
 func (u *HealthUsecase) CreateSteps(ctx context.Context, dto CreateStepsRequest) (CreateStepsResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -155,13 +157,14 @@ func (u *HealthUsecase) CreateSteps(ctx context.Context, dto CreateStepsRequest)
 	err := u.healthService.CreateSteps(ctx, steps)
 	if err != nil {
 		u.logger.Error("failed to create steps", logger.Error(err))
+
 		return CreateStepsResponse{}, err
 	}
 
 	return CreateStepsResponse{}, nil
 }
 
-// GetSteps получает сырые данные о шагах
+// GetSteps получает сырые данные о шагах.
 func (u *HealthUsecase) GetSteps(ctx context.Context, dto GetStepsRequest) (GetStepsResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -172,13 +175,14 @@ func (u *HealthUsecase) GetSteps(ctx context.Context, dto GetStepsRequest) (GetS
 	steps, err := u.healthService.GetSteps(ctx, authClaims.UserID, dto.From, dto.To)
 	if err != nil {
 		u.logger.Error("failed to get steps", logger.Error(err))
+
 		return GetStepsResponse{}, err
 	}
 
 	return GetStepsResponse{Steps: steps}, nil
 }
 
-// GetHourlySteps получает агрегированные данные по шагам по часам
+// GetHourlySteps получает агрегированные данные по шагам по часам.
 func (u *HealthUsecase) GetHourlySteps(ctx context.Context, dto GetHourlyStepsRequest) (GetHourlyStepsResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -190,7 +194,7 @@ func (u *HealthUsecase) GetHourlySteps(ctx context.Context, dto GetHourlyStepsRe
 	if err != nil {
 		// Логируем как debug если это проблема с пустым диапазоном
 		if isEmptyRangeError(err) {
-			u.logger.Debug("empty range for hourly steps query", 
+			u.logger.Debug("empty range for hourly steps query",
 				logger.String("user_id", authClaims.UserID.String()),
 				logger.String("from", dto.From.Format("2006-01-02T15:04:05Z07:00")),
 				logger.String("to", dto.To.Format("2006-01-02T15:04:05Z07:00")),
@@ -199,13 +203,14 @@ func (u *HealthUsecase) GetHourlySteps(ctx context.Context, dto GetHourlyStepsRe
 			return GetHourlyStepsResponse{Steps: make(map[time.Time]int64)}, nil
 		}
 		u.logger.Error("failed to get hourly steps", logger.Error(err))
+
 		return GetHourlyStepsResponse{}, err
 	}
 
 	return GetHourlyStepsResponse{Steps: steps}, nil
 }
 
-// GetDailySteps получает агрегированные данные по шагам по дням
+// GetDailySteps получает агрегированные данные по шагам по дням.
 func (u *HealthUsecase) GetDailySteps(ctx context.Context, dto GetDailyStepsRequest) (GetDailyStepsResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -217,7 +222,7 @@ func (u *HealthUsecase) GetDailySteps(ctx context.Context, dto GetDailyStepsRequ
 	if err != nil {
 		// Логируем как debug если это проблема с пустым диапазоном
 		if isEmptyRangeError(err) {
-			u.logger.Debug("empty range for daily steps query", 
+			u.logger.Debug("empty range for daily steps query",
 				logger.String("user_id", authClaims.UserID.String()),
 				logger.String("from", dto.From.Format("2006-01-02T15:04:05Z07:00")),
 				logger.String("to", dto.To.Format("2006-01-02T15:04:05Z07:00")),
@@ -226,8 +231,9 @@ func (u *HealthUsecase) GetDailySteps(ctx context.Context, dto GetDailyStepsRequ
 			return GetDailyStepsResponse{Steps: make(map[time.Time]int64)}, nil
 		}
 		u.logger.Error("failed to get daily steps", logger.Error(err))
+
 		return GetDailyStepsResponse{}, err
 	}
 
 	return GetDailyStepsResponse{Steps: steps}, nil
-} 
+}

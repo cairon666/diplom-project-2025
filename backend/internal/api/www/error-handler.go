@@ -16,6 +16,7 @@ func HandleError(c *gin.Context, err error) {
 	// Проверяем, является ли ошибка нашей кастомной ошибкой
 	if errors.As(err, &appErr) {
 		c.JSON(appErr.HTTPCode(), appErr.JSON())
+
 		return
 	}
 

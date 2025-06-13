@@ -12,20 +12,20 @@ import (
 	"github.com/google/uuid"
 )
 
-// CreateTemperatureRequest представляет запрос на создание температуры
+// CreateTemperatureRequest представляет запрос на создание температуры.
 type CreateTemperatureRequest struct {
-	ID                 *string  `json:"id,omitempty"`
-	TemperatureCelsius float64  `json:"temperature_celsius" binding:"required,min=30,max=50"`
-	DeviceID           *string  `json:"device_id,omitempty"`
-	CreatedAt          *string  `json:"created_at,omitempty"`
+	ID                 *string `json:"id,omitempty"`
+	TemperatureCelsius float64 `binding:"required,min=30,max=50" json:"temperature_celsius"`
+	DeviceID           *string `json:"device_id,omitempty"`
+	CreatedAt          *string `json:"created_at,omitempty"`
 }
 
-// CreateTemperaturesRequest представляет запрос на создание множественных температур
+// CreateTemperaturesRequest представляет запрос на создание множественных температур.
 type CreateTemperaturesRequest struct {
-	Temperatures []CreateTemperatureRequest `json:"temperatures" binding:"required,min=1"`
+	Temperatures []CreateTemperatureRequest `binding:"required,min=1" json:"temperatures"`
 }
 
-// Response DTOs для router
+// Response DTOs для router.
 type TemperatureResponse struct {
 	ID                 string    `json:"id"`
 	TemperatureCelsius float64   `json:"temperature_celsius"`
@@ -45,14 +45,14 @@ type DailyTemperatureResponse struct {
 	Temperatures map[string]float64 `json:"temperatures"` // key: day timestamp
 }
 
-// Функции конвертации
+// Функции конвертации.
 func convertToRouterTemperature(temperature models.Temperature) TemperatureResponse {
 	var deviceID *string
 	if temperature.DeviceID != uuid.Nil {
 		deviceIDStr := temperature.DeviceID.String()
 		deviceID = &deviceIDStr
 	}
-	
+
 	return TemperatureResponse{
 		ID:                 temperature.ID.String(),
 		TemperatureCelsius: temperature.TemperatureCelsius,
@@ -66,14 +66,16 @@ func convertToRouterTemperatures(temperatures []models.Temperature) []Temperatur
 	for i, temperature := range temperatures {
 		result[i] = convertToRouterTemperature(temperature)
 	}
+
 	return result
 }
 
-// CreateTemperature обрабатывает запрос на создание температуры
+// CreateTemperature обрабатывает запрос на создание температуры.
 func (r *HealthRouter) CreateTemperature(c *gin.Context) {
 	var req CreateTemperatureRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -87,6 +89,7 @@ func (r *HealthRouter) CreateTemperature(c *gin.Context) {
 	}
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -96,6 +99,7 @@ func (r *HealthRouter) CreateTemperature(c *gin.Context) {
 		deviceID, err = r.parseOptionalUUID(*req.DeviceID)
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 	}
@@ -106,6 +110,7 @@ func (r *HealthRouter) CreateTemperature(c *gin.Context) {
 		createdAt, err = time.Parse(time.RFC3339, *req.CreatedAt)
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 	} else {
@@ -116,17 +121,19 @@ func (r *HealthRouter) CreateTemperature(c *gin.Context) {
 	_, err = r.healthUsecase.CreateTemperature(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	c.Status(http.StatusCreated)
 }
 
-// CreateTemperatures обрабатывает запрос на создание множественных температур
+// CreateTemperatures обрабатывает запрос на создание множественных температур.
 func (r *HealthRouter) CreateTemperatures(c *gin.Context) {
 	var req CreateTemperaturesRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -142,6 +149,7 @@ func (r *HealthRouter) CreateTemperatures(c *gin.Context) {
 		}
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 
@@ -151,6 +159,7 @@ func (r *HealthRouter) CreateTemperatures(c *gin.Context) {
 			deviceID, err = r.parseOptionalUUID(*tempReq.DeviceID)
 			if err != nil {
 				www.HandleError(c, apperrors.InvalidParams())
+
 				return
 			}
 		}
@@ -161,6 +170,7 @@ func (r *HealthRouter) CreateTemperatures(c *gin.Context) {
 			createdAt, err = time.Parse(time.RFC3339, *tempReq.CreatedAt)
 			if err != nil {
 				www.HandleError(c, apperrors.InvalidParams())
+
 				return
 			}
 		} else {
@@ -174,17 +184,19 @@ func (r *HealthRouter) CreateTemperatures(c *gin.Context) {
 	_, err := r.healthUsecase.CreateTemperatures(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	c.Status(http.StatusCreated)
 }
 
-// GetTemperatures обрабатывает запрос на получение температур
+// GetTemperatures обрабатывает запрос на получение температур.
 func (r *HealthRouter) GetTemperatures(c *gin.Context) {
 	from, to, err := r.parseDateRange(c)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -192,6 +204,7 @@ func (r *HealthRouter) GetTemperatures(c *gin.Context) {
 	usecaseResp, err := r.healthUsecase.GetTemperatures(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -199,15 +212,16 @@ func (r *HealthRouter) GetTemperatures(c *gin.Context) {
 	routerResp := TemperaturesResponse{
 		Temperatures: convertToRouterTemperatures(usecaseResp.Temperatures),
 	}
-	
+
 	c.JSON(http.StatusOK, routerResp)
 }
 
-// GetHourlyTemperatureAvg обрабатывает запрос на получение агрегированных температур по часам
+// GetHourlyTemperatureAvg обрабатывает запрос на получение агрегированных температур по часам.
 func (r *HealthRouter) GetHourlyTemperatureAvg(c *gin.Context) {
 	from, to, err := r.parseDateRange(c)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -215,6 +229,7 @@ func (r *HealthRouter) GetHourlyTemperatureAvg(c *gin.Context) {
 	usecaseResp, err := r.healthUsecase.GetHourlyTemperatureAvg(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -222,15 +237,16 @@ func (r *HealthRouter) GetHourlyTemperatureAvg(c *gin.Context) {
 	routerResp := HourlyTemperatureResponse{
 		Temperatures: convertTimeMapToStringMapFloat(usecaseResp.Temperatures),
 	}
-	
+
 	c.JSON(http.StatusOK, routerResp)
 }
 
-// GetDailyTemperatureAvg обрабатывает запрос на получение агрегированных температур по дням
+// GetDailyTemperatureAvg обрабатывает запрос на получение агрегированных температур по дням.
 func (r *HealthRouter) GetDailyTemperatureAvg(c *gin.Context) {
 	from, to, err := r.parseDateRange(c)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -238,6 +254,7 @@ func (r *HealthRouter) GetDailyTemperatureAvg(c *gin.Context) {
 	usecaseResp, err := r.healthUsecase.GetDailyTemperatureAvg(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -245,6 +262,6 @@ func (r *HealthRouter) GetDailyTemperatureAvg(c *gin.Context) {
 	routerResp := DailyTemperatureResponse{
 		Temperatures: convertTimeMapToStringMapFloat(usecaseResp.Temperatures),
 	}
-	
+
 	c.JSON(http.StatusOK, routerResp)
-} 
+}

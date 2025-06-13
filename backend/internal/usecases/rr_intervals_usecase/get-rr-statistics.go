@@ -11,7 +11,7 @@ import (
 	"github.com/cairon666/vkr-backend/pkg/logger"
 )
 
-// GetRRStatisticsRequest представляет запрос на получение статистики R-R интервалов
+// GetRRStatisticsRequest представляет запрос на получение статистики R-R интервалов.
 type GetRRStatisticsRequest struct {
 	From             time.Time
 	To               time.Time
@@ -30,7 +30,7 @@ func NewGetRRStatisticsRequest(from, to time.Time) GetRRStatisticsRequest {
 	}
 }
 
-// GetRRStatisticsResponse представляет ответ со статистикой R-R интервалов
+// GetRRStatisticsResponse представляет ответ со статистикой R-R интервалов.
 type GetRRStatisticsResponse struct {
 	Summary    *models.RRStatisticalSummary
 	Histogram  *models.RRHistogramData
@@ -38,7 +38,7 @@ type GetRRStatisticsResponse struct {
 	TimeRange  TimeRange
 }
 
-// GetRRStatistics получает статистические данные R-R интервалов
+// GetRRStatistics получает статистические данные R-R интервалов.
 func (uc *RRIntervalsUsecase) GetRRStatistics(ctx context.Context, req GetRRStatisticsRequest) (GetRRStatisticsResponse, error) {
 	// Проверяем права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -69,6 +69,7 @@ func (uc *RRIntervalsUsecase) GetRRStatistics(ctx context.Context, req GetRRStat
 		uc.logger.Error("failed to get statistical summary",
 			logger.String("user_id", authClaims.UserID.String()),
 			logger.Error(err))
+
 		return GetRRStatisticsResponse{}, apperrors.DataProcessingErrorf("failed to get statistics: %v", err)
 	}
 
@@ -113,7 +114,7 @@ func (uc *RRIntervalsUsecase) GetRRStatistics(ctx context.Context, req GetRRStat
 	return response, nil
 }
 
-// GetAggregatedRRData получает агрегированные данные R-R интервалов по временным окнам
+// GetAggregatedRRData получает агрегированные данные R-R интервалов по временным окнам.
 func (uc *RRIntervalsUsecase) GetAggregatedRRData(ctx context.Context, from, to time.Time, intervalMinutes int) ([]models.AggregatedRRData, error) {
 	// Проверяем права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -142,8 +143,9 @@ func (uc *RRIntervalsUsecase) GetAggregatedRRData(ctx context.Context, from, to 
 		uc.logger.Error("failed to get aggregated data",
 			logger.String("user_id", authClaims.UserID.String()),
 			logger.Error(err))
+
 		return nil, apperrors.DataProcessingErrorf("failed to get aggregated data: %v", err)
 	}
 
 	return data, nil
-} 
+}

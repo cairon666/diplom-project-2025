@@ -25,6 +25,7 @@ func (r *ExternalAppsRouter) GetExternalAppList(ctx *gin.Context) {
 	resp, err := r.externalAppsUsecase.GetExternalAppList(ctx.Request.Context())
 	if err != nil {
 		www.HandleError(ctx, err)
+
 		return
 	}
 

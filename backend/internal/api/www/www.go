@@ -33,6 +33,7 @@ func NewHTTPServer(lc fx.Lifecycle, config *config.Config, handler http.Handler)
 			}
 			fmt.Println("Starting HTTP server at", srv.Addr)
 			go srv.Serve(ln)
+
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {

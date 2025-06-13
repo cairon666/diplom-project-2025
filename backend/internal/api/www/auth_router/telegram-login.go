@@ -27,6 +27,7 @@ func (r *AuthRouter) TelegramLoginRoute(c *gin.Context) {
 	var req TelegramLoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -34,6 +35,7 @@ func (r *AuthRouter) TelegramLoginRoute(c *gin.Context) {
 	resp, err := r.authUsecase.TelegramLogin(c, reqDTO)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

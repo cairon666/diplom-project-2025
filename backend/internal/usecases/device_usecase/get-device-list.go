@@ -34,6 +34,7 @@ func (du *DeviceUsecase) GetDeviceList(ctx context.Context) (GetDeviceListRespon
 		return GetDeviceListResponse{Devices: []DeviceListItem{}}, nil
 	} else if err != nil {
 		du.logger.Error("failed to get device list", logger.Error(err))
+
 		return GetDeviceListResponse{}, err
 	}
 

@@ -17,12 +17,14 @@ func (r *UserRouter) UpdateSettingProfile(c *gin.Context) {
 	var req UpdateSettingProfileRequest
 	if err := c.Bind(&req); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	dto := user_usecase.NewUpdateSettingProfileRequest(req.FirstName, req.LastName)
 	if err := r.userUsecase.UpdateSettingProfile(c.Request.Context(), dto); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

@@ -40,6 +40,7 @@ func (r *RolesRepo) GetPermissionsByRoleIDs(ctx context.Context, roleIDs []int32
 			Name: p.Name,
 		}
 	}
+
 	return result, nil
 }
 
@@ -50,6 +51,7 @@ func (r *RolesRepo) GetPermissionsByUserID(ctx context.Context, userID uuid.UUID
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, apperrors.NotFound()
 		}
+
 		return nil, err
 	}
 	result := make([]models.Permission, len(perms))
@@ -59,6 +61,7 @@ func (r *RolesRepo) GetPermissionsByUserID(ctx context.Context, userID uuid.UUID
 			Name: p.Name,
 		}
 	}
+
 	return result, nil
 }
 
@@ -109,6 +112,7 @@ func (r *RolesRepo) GetRoleByName(ctx context.Context, name string) (models.Role
 		if errors.Is(err, pgx.ErrNoRows) {
 			return models.Role{}, apperrors.NotFound()
 		}
+
 		return models.Role{}, err
 	}
 
@@ -124,6 +128,7 @@ func (r *RolesRepo) GetRolesByExternalAppID(ctx context.Context, externalID uuid
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, apperrors.NotFound()
 		}
+
 		return nil, err
 	}
 
@@ -144,6 +149,7 @@ func (r *RolesRepo) GetPermissionsByExternalAppID(ctx context.Context, externalI
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, apperrors.NotFound()
 		}
+
 		return nil, err
 	}
 	result := make([]models.Permission, len(perms))
@@ -193,5 +199,6 @@ func (r *RolesRepo) AssignRolesToExternalApp(ctx context.Context, externalID uui
 
 	// Фиксируем транзакцию
 	err = tx.Commit(ctx)
+
 	return err
 }

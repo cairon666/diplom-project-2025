@@ -24,6 +24,7 @@ func (dr *DeviceRouter) DeleteDevice(c *gin.Context) {
 	dto := device_usecase.NewDeleteDeviceRequest(id)
 	if err := dr.deviceUsecase.DeleteDevice(c.Request.Context(), dto); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

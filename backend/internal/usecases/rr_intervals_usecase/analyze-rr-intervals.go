@@ -11,7 +11,7 @@ import (
 	"github.com/cairon666/vkr-backend/pkg/logger"
 )
 
-// GetRRHistogram получает гистограмму R-R интервалов
+// GetRRHistogram получает гистограмму R-R интервалов.
 func (uc *RRIntervalsUsecase) GetRRHistogram(ctx context.Context, from, to time.Time, binsCount int) (*models.RRHistogramData, error) {
 	// Проверяем права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -40,13 +40,14 @@ func (uc *RRIntervalsUsecase) GetRRHistogram(ctx context.Context, from, to time.
 		uc.logger.Error("failed to build histogram",
 			logger.String("user_id", authClaims.UserID.String()),
 			logger.Error(err))
+
 		return nil, apperrors.AnalysisNotPossiblef("failed to build histogram: %v", err)
 	}
 
 	return histogram, nil
 }
 
-// GetRRTrends получает анализ трендов R-R интервалов
+// GetRRTrends получает анализ трендов R-R интервалов.
 func (uc *RRIntervalsUsecase) GetRRTrends(ctx context.Context, from, to time.Time, windowSize int) (*models.RRTrendAnalysis, error) {
 	// Проверяем права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -75,13 +76,14 @@ func (uc *RRIntervalsUsecase) GetRRTrends(ctx context.Context, from, to time.Tim
 		uc.logger.Error("failed to analyze trends",
 			logger.String("user_id", authClaims.UserID.String()),
 			logger.Error(err))
+
 		return nil, apperrors.AnalysisNotPossiblef("failed to analyze trends: %v", err)
 	}
 
 	return trends, nil
 }
 
-// GetHRVMetrics получает метрики вариабельности сердечного ритма
+// GetHRVMetrics получает метрики вариабельности сердечного ритма.
 func (uc *RRIntervalsUsecase) GetHRVMetrics(ctx context.Context, from, to time.Time) (*models.HRVMetrics, error) {
 	// Проверяем права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -106,13 +108,14 @@ func (uc *RRIntervalsUsecase) GetHRVMetrics(ctx context.Context, from, to time.T
 		uc.logger.Error("failed to calculate HRV metrics",
 			logger.String("user_id", authClaims.UserID.String()),
 			logger.Error(err))
+
 		return nil, apperrors.AnalysisNotPossiblef("failed to calculate HRV metrics: %v", err)
 	}
 
 	return hrv, nil
 }
 
-// GetRRDifferentialHistogram получает дифференциальную гистограмму R-R интервалов
+// GetRRDifferentialHistogram получает дифференциальную гистограмму R-R интервалов.
 func (uc *RRIntervalsUsecase) GetRRDifferentialHistogram(ctx context.Context, from, to time.Time, binsCount int) (*models.DifferentialHistogramData, error) {
 	// Проверяем права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -141,13 +144,14 @@ func (uc *RRIntervalsUsecase) GetRRDifferentialHistogram(ctx context.Context, fr
 		uc.logger.Error("failed to build differential histogram",
 			logger.String("user_id", authClaims.UserID.String()),
 			logger.Error(err))
+
 		return nil, apperrors.AnalysisNotPossiblef("failed to build differential histogram: %v", err)
 	}
 
 	return histogram, nil
 }
 
-// GetRRScatterplot получает скаттерограмму (диаграмму Пуанкаре) R-R интервалов
+// GetRRScatterplot получает скаттерограмму (диаграмму Пуанкаре) R-R интервалов.
 func (uc *RRIntervalsUsecase) GetRRScatterplot(ctx context.Context, from, to time.Time) (*models.ScatterplotData, error) {
 	// Проверяем права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -172,8 +176,9 @@ func (uc *RRIntervalsUsecase) GetRRScatterplot(ctx context.Context, from, to tim
 		uc.logger.Error("failed to build scatterplot",
 			logger.String("user_id", authClaims.UserID.String()),
 			logger.Error(err))
+
 		return nil, apperrors.AnalysisNotPossiblef("failed to build scatterplot: %v", err)
 	}
 
 	return scatterplot, nil
-} 
+}

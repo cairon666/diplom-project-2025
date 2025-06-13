@@ -10,14 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetAggregatedDataResponseDTO представляет HTTP ответ с агрегированными данными
+// GetAggregatedDataResponseDTO представляет HTTP ответ с агрегированными данными.
 type GetAggregatedDataResponseDTO struct {
 	Data      []AggregatedRRDataDTO `json:"data"`
 	TimeRange TimeRangeDTO          `json:"time_range"`
 	Interval  int                   `json:"interval_minutes"`
 }
 
-// AggregatedRRDataDTO представляет агрегированные данные R-R интервалов для HTTP ответа
+// AggregatedRRDataDTO представляет агрегированные данные R-R интервалов для HTTP ответа.
 type AggregatedRRDataDTO struct {
 	Time   time.Time `json:"time"`
 	Mean   float64   `json:"mean"`
@@ -38,6 +38,7 @@ func (r *RRIntervalsRouter) GetAggregatedData(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "from and to parameters are required (RFC3339 format)",
 		})
+
 		return
 	}
 
@@ -45,6 +46,7 @@ func (r *RRIntervalsRouter) GetAggregatedData(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "interval parameter is required (minutes)",
 		})
+
 		return
 	}
 
@@ -54,6 +56,7 @@ func (r *RRIntervalsRouter) GetAggregatedData(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid from time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -62,6 +65,7 @@ func (r *RRIntervalsRouter) GetAggregatedData(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid to time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -71,6 +75,7 @@ func (r *RRIntervalsRouter) GetAggregatedData(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid interval parameter (expected 1-60 minutes)",
 		})
+
 		return
 	}
 
@@ -78,6 +83,7 @@ func (r *RRIntervalsRouter) GetAggregatedData(c *gin.Context) {
 	data, err := r.rrIntervalsUsecase.GetAggregatedRRData(c.Request.Context(), from, to, intervalMinutes)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -99,7 +105,7 @@ func (r *RRIntervalsRouter) GetAggregatedData(c *gin.Context) {
 	c.JSON(http.StatusOK, responseDTO)
 }
 
-// toAggregatedRRDataDTO конвертирует модель в DTO
+// toAggregatedRRDataDTO конвертирует модель в DTO.
 func toAggregatedRRDataDTO(data models.AggregatedRRData) AggregatedRRDataDTO {
 	return AggregatedRRDataDTO{
 		Time:   data.Time,
@@ -109,4 +115,4 @@ func toAggregatedRRDataDTO(data models.AggregatedRRData) AggregatedRRDataDTO {
 		Max:    data.Max,
 		Count:  data.Count,
 	}
-} 
+}

@@ -12,20 +12,20 @@ import (
 	"github.com/google/uuid"
 )
 
-// CreateStepRequest представляет запрос на создание шага
+// CreateStepRequest представляет запрос на создание шага.
 type CreateStepRequest struct {
 	ID        *string `json:"id,omitempty"`
-	StepCount int64   `json:"step_count" binding:"required,min=0"`
+	StepCount int64   `binding:"required,min=0"    json:"step_count"`
 	DeviceID  *string `json:"device_id,omitempty"`
 	CreatedAt *string `json:"created_at,omitempty"`
 }
 
-// CreateStepsRequest представляет запрос на создание множественных шагов
+// CreateStepsRequest представляет запрос на создание множественных шагов.
 type CreateStepsRequest struct {
-	Steps []CreateStepRequest `json:"steps" binding:"required,min=1"`
+	Steps []CreateStepRequest `binding:"required,min=1" json:"steps"`
 }
 
-// Response DTOs для router
+// Response DTOs для router.
 type StepResponse struct {
 	ID        string    `json:"id"`
 	StepCount int64     `json:"step_count"`
@@ -45,14 +45,14 @@ type DailyStepsResponse struct {
 	Steps map[string]int64 `json:"steps"` // key: day timestamp
 }
 
-// Функции конвертации
+// Функции конвертации.
 func convertToRouterStep(step models.Step) StepResponse {
 	var deviceID *string
 	if step.DeviceID != uuid.Nil {
 		deviceIDStr := step.DeviceID.String()
 		deviceID = &deviceIDStr
 	}
-	
+
 	return StepResponse{
 		ID:        step.ID.String(),
 		StepCount: step.StepCount,
@@ -66,6 +66,7 @@ func convertToRouterSteps(steps []models.Step) []StepResponse {
 	for i, step := range steps {
 		result[i] = convertToRouterStep(step)
 	}
+
 	return result
 }
 
@@ -74,14 +75,16 @@ func convertTimeMapToStringMap(timeMap map[time.Time]int64) map[string]int64 {
 	for t, value := range timeMap {
 		result[t.Format(time.RFC3339)] = value
 	}
+
 	return result
 }
 
-// CreateStep обрабатывает запрос на создание шага
+// CreateStep обрабатывает запрос на создание шага.
 func (r *HealthRouter) CreateStep(c *gin.Context) {
 	var req CreateStepRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -95,6 +98,7 @@ func (r *HealthRouter) CreateStep(c *gin.Context) {
 	}
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -104,6 +108,7 @@ func (r *HealthRouter) CreateStep(c *gin.Context) {
 		deviceID, err = r.parseOptionalUUID(*req.DeviceID)
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 	}
@@ -114,6 +119,7 @@ func (r *HealthRouter) CreateStep(c *gin.Context) {
 		createdAt, err = time.Parse(time.RFC3339, *req.CreatedAt)
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 	} else {
@@ -124,17 +130,19 @@ func (r *HealthRouter) CreateStep(c *gin.Context) {
 	_, err = r.healthUsecase.CreateStep(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	c.Status(http.StatusCreated)
 }
 
-// CreateSteps обрабатывает запрос на создание множественных шагов
+// CreateSteps обрабатывает запрос на создание множественных шагов.
 func (r *HealthRouter) CreateSteps(c *gin.Context) {
 	var req CreateStepsRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -150,6 +158,7 @@ func (r *HealthRouter) CreateSteps(c *gin.Context) {
 		}
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 
@@ -159,6 +168,7 @@ func (r *HealthRouter) CreateSteps(c *gin.Context) {
 			deviceID, err = r.parseOptionalUUID(*stepReq.DeviceID)
 			if err != nil {
 				www.HandleError(c, apperrors.InvalidParams())
+
 				return
 			}
 		}
@@ -169,6 +179,7 @@ func (r *HealthRouter) CreateSteps(c *gin.Context) {
 			createdAt, err = time.Parse(time.RFC3339, *stepReq.CreatedAt)
 			if err != nil {
 				www.HandleError(c, apperrors.InvalidParams())
+
 				return
 			}
 		} else {
@@ -182,17 +193,19 @@ func (r *HealthRouter) CreateSteps(c *gin.Context) {
 	_, err := r.healthUsecase.CreateSteps(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	c.Status(http.StatusCreated)
 }
 
-// GetSteps обрабатывает запрос на получение шагов
+// GetSteps обрабатывает запрос на получение шагов.
 func (r *HealthRouter) GetSteps(c *gin.Context) {
 	from, to, err := r.parseDateRange(c)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -200,6 +213,7 @@ func (r *HealthRouter) GetSteps(c *gin.Context) {
 	usecaseResp, err := r.healthUsecase.GetSteps(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -207,15 +221,16 @@ func (r *HealthRouter) GetSteps(c *gin.Context) {
 	routerResp := StepsResponse{
 		Steps: convertToRouterSteps(usecaseResp.Steps),
 	}
-	
+
 	c.JSON(http.StatusOK, routerResp)
 }
 
-// GetHourlySteps обрабатывает запрос на получение агрегированных шагов по часам
+// GetHourlySteps обрабатывает запрос на получение агрегированных шагов по часам.
 func (r *HealthRouter) GetHourlySteps(c *gin.Context) {
 	from, to, err := r.parseDateRange(c)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -223,6 +238,7 @@ func (r *HealthRouter) GetHourlySteps(c *gin.Context) {
 	usecaseResp, err := r.healthUsecase.GetHourlySteps(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -230,15 +246,16 @@ func (r *HealthRouter) GetHourlySteps(c *gin.Context) {
 	routerResp := HourlyStepsResponse{
 		Steps: convertTimeMapToStringMap(usecaseResp.Steps),
 	}
-	
+
 	c.JSON(http.StatusOK, routerResp)
 }
 
-// GetDailySteps обрабатывает запрос на получение агрегированных шагов по дням
+// GetDailySteps обрабатывает запрос на получение агрегированных шагов по дням.
 func (r *HealthRouter) GetDailySteps(c *gin.Context) {
 	from, to, err := r.parseDateRange(c)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -246,6 +263,7 @@ func (r *HealthRouter) GetDailySteps(c *gin.Context) {
 	usecaseResp, err := r.healthUsecase.GetDailySteps(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -253,6 +271,6 @@ func (r *HealthRouter) GetDailySteps(c *gin.Context) {
 	routerResp := DailyStepsResponse{
 		Steps: convertTimeMapToStringMap(usecaseResp.Steps),
 	}
-	
+
 	c.JSON(http.StatusOK, routerResp)
-} 
+}

@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// BuildHistogram строит гистограмму R-R интервалов
+// BuildHistogram строит гистограмму R-R интервалов.
 func (s *RRIntervalsService) BuildHistogram(ctx context.Context, userID uuid.UUID, from, to time.Time, binsCount int) (*models.RRHistogramData, error) {
 	// Получаем сырые данные для анализа
 	values, err := s.rrIntervalsRepo.GetRawValuesForAnalysis(ctx, userID, from, to)
@@ -47,7 +47,7 @@ func (s *RRIntervalsService) BuildHistogram(ctx context.Context, userID uuid.UUI
 	}, nil
 }
 
-// BuildDifferentialHistogram строит дифференциальную гистограмму разностей между соседними R-R интервалами
+// BuildDifferentialHistogram строит дифференциальную гистограмму разностей между соседними R-R интервалами.
 func (s *RRIntervalsService) BuildDifferentialHistogram(ctx context.Context, userID uuid.UUID, from, to time.Time, binsCount int) (*models.DifferentialHistogramData, error) {
 	// Получаем сырые данные для анализа
 	values, err := s.rrIntervalsRepo.GetRawValuesForAnalysis(ctx, userID, from, to)
@@ -91,12 +91,12 @@ func (s *RRIntervalsService) BuildDifferentialHistogram(ctx context.Context, use
 
 // Вспомогательные методы для обычной гистограммы
 
-// calculateOptimalBinsCount рассчитывает оптимальное количество bins по правилу Стерджеса
+// calculateOptimalBinsCount рассчитывает оптимальное количество bins по правилу Стерджеса.
 func (s *RRIntervalsService) calculateOptimalBinsCount(values []int64) int {
 	n := len(values)
 	// Правило Стерджеса: bins = 1 + log2(n)
 	binsCount := int(1 + math.Log2(float64(n)))
-	
+
 	// Ограничиваем диапазон для R-R интервалов
 	if binsCount < 15 {
 		binsCount = 15
@@ -104,11 +104,11 @@ func (s *RRIntervalsService) calculateOptimalBinsCount(values []int64) int {
 	if binsCount > 30 {
 		binsCount = 30
 	}
-	
+
 	return binsCount
 }
 
-// calculateBasicStatistics вычисляет базовую статистику
+// calculateBasicStatistics вычисляет базовую статистику.
 func (s *RRIntervalsService) calculateBasicStatistics(values []int64) *models.RRStatisticalSummary {
 	if len(values) == 0 {
 		return &models.RRStatisticalSummary{}
@@ -144,7 +144,7 @@ func (s *RRIntervalsService) calculateBasicStatistics(values []int64) *models.RR
 	}
 }
 
-// buildHistogramBins строит bins гистограммы
+// buildHistogramBins строит bins гистограммы.
 func (s *RRIntervalsService) buildHistogramBins(values []int64, binsCount int, stats *models.RRStatisticalSummary) []models.HistogramBin {
 	if len(values) == 0 || binsCount <= 0 {
 		return []models.HistogramBin{}
@@ -156,9 +156,9 @@ func (s *RRIntervalsService) buildHistogramBins(values []int64, binsCount int, s
 	}
 
 	bins := make([]models.HistogramBin, binsCount)
-	
+
 	// Инициализируем bins
-	for i := 0; i < binsCount; i++ {
+	for i := range binsCount {
 		bins[i] = models.HistogramBin{
 			RangeStart: stats.Min + int64(i)*binWidth,
 			RangeEnd:   stats.Min + int64(i+1)*binWidth,
@@ -188,24 +188,25 @@ func (s *RRIntervalsService) buildHistogramBins(values []int64, binsCount int, s
 	return bins
 }
 
-// calculateBinWidth вычисляет ширину бина
+// calculateBinWidth вычисляет ширину бина.
 func (s *RRIntervalsService) calculateBinWidth(values []int64, binsCount int) int64 {
 	if len(values) == 0 || binsCount <= 0 {
 		return 0
 	}
 
 	stats := s.calculateBasicStatistics(values)
+
 	return (stats.Max - stats.Min) / int64(binsCount)
 }
 
 // Вспомогательные методы для дифференциальной гистограммы
 
-// calculateOptimalBinsCountForDifferences рассчитывает оптимальное количество bins для разностей
+// calculateOptimalBinsCountForDifferences рассчитывает оптимальное количество bins для разностей.
 func (s *RRIntervalsService) calculateOptimalBinsCountForDifferences(differences []int64) int {
 	n := len(differences)
 	// Правило Стерджеса адаптированное для разностей R-R интервалов
 	binsCount := int(1 + math.Log2(float64(n)))
-	
+
 	// Ограничиваем диапазон для разностей (обычно меньший диапазон чем для основных интервалов)
 	if binsCount < 10 {
 		binsCount = 10
@@ -213,11 +214,11 @@ func (s *RRIntervalsService) calculateOptimalBinsCountForDifferences(differences
 	if binsCount > 25 {
 		binsCount = 25
 	}
-	
+
 	return binsCount
 }
 
-// calculateDifferentialStatistics вычисляет статистику разностей
+// calculateDifferentialStatistics вычисляет статистику разностей.
 func (s *RRIntervalsService) calculateDifferentialStatistics(differences []int64) *models.DifferentialStatistics {
 	if len(differences) == 0 {
 		return &models.DifferentialStatistics{}
@@ -262,7 +263,7 @@ func (s *RRIntervalsService) calculateDifferentialStatistics(differences []int64
 	}
 }
 
-// buildDifferentialHistogramBins строит bins дифференциальной гистограммы
+// buildDifferentialHistogramBins строит bins дифференциальной гистограммы.
 func (s *RRIntervalsService) buildDifferentialHistogramBins(differences []int64, binsCount int, stats *models.DifferentialStatistics) []models.DifferentialHistogramBin {
 	if len(differences) == 0 || binsCount <= 0 {
 		return []models.DifferentialHistogramBin{}
@@ -274,9 +275,9 @@ func (s *RRIntervalsService) buildDifferentialHistogramBins(differences []int64,
 	}
 
 	bins := make([]models.DifferentialHistogramBin, binsCount)
-	
+
 	// Инициализируем bins
-	for i := 0; i < binsCount; i++ {
+	for i := range binsCount {
 		bins[i] = models.DifferentialHistogramBin{
 			RangeStart: stats.Min + int64(i)*binWidth,
 			RangeEnd:   stats.Min + int64(i+1)*binWidth,
@@ -306,12 +307,13 @@ func (s *RRIntervalsService) buildDifferentialHistogramBins(differences []int64,
 	return bins
 }
 
-// calculateDifferentialBinWidth вычисляет ширину бина для дифференциальной гистограммы
+// calculateDifferentialBinWidth вычисляет ширину бина для дифференциальной гистограммы.
 func (s *RRIntervalsService) calculateDifferentialBinWidth(differences []int64, binsCount int) int64 {
 	if len(differences) == 0 || binsCount <= 0 {
 		return 0
 	}
 
 	stats := s.calculateDifferentialStatistics(differences)
+
 	return (stats.Max - stats.Min) / int64(binsCount)
-} 
+}

@@ -1,0 +1,37 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: frontend-eslint
+      root: frontend/
+      glob: "**/*.{js,jsx,ts,tsx,css,scss,json}"
+      stage_fixed: true
+      run: npx eslint --fix {staged_files}
+    - name: frontend-prettier
+      root: frontend/
+      glob: "**/*.{js,jsx,ts,tsx,css,scss,json}"
+      stage_fixed: true
+      run: npx prettier --write {staged_files}
+    - name: backend-golangci-lint
+      glob: "**/*.{go,go.mod,go.sum}"
+      root: backend/
+      run: golangci-lint run ./...
+
+pre-push:
+  parallel: true
+  jobs:
+    - name: frontend-build
+      root: frontend/
+      run: npm run build
+    # TODO: add frontend test (#4)
+    - name: frontend-test
+      root: frontend/
+      skip: true
+      run: npm run test
+    - name: backend-build-www
+      root: backend/
+      run: go build -o /dev/null ./cmd/www
+    # TODO: add backend test (#5)
+    - name: backend-test
+      skip: true
+      root: backend/
+      run: go test ./...

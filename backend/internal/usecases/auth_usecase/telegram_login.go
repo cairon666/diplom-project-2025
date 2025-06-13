@@ -56,18 +56,21 @@ func (authUsecase *AuthUsecase) TelegramLogin(ctx context.Context, telegramLogin
 		})
 		if err != nil {
 			authUsecase.logger.Error("failed to create partial user and create temp id", logger.Error(err))
+
 			return TelegramLoginResponse{}, err
 		}
 
 		return TelegramLoginResponse{}, genNeedEndRegistrationError(tempId)
 	} else if err != nil {
 		authUsecase.logger.Error("failed to get auth provider", logger.Error(err))
+
 		return TelegramLoginResponse{}, apperrors.InternalError()
 	}
 
 	user, err := authUsecase.userService.GetUserById(ctx, authProvider.UserId)
 	if err != nil {
 		authUsecase.logger.Error("failed to get user by id", logger.Error(err))
+
 		return TelegramLoginResponse{}, apperrors.InternalError()
 	}
 
@@ -90,6 +93,7 @@ func (authUsecase *AuthUsecase) TelegramLogin(ctx context.Context, telegramLogin
 	accessToken, refreshToken, err := authUsecase.authService.GenerateJWT(ctx, user)
 	if err != nil {
 		authUsecase.logger.Error("failed to generate jwt", logger.Error(err))
+
 		return TelegramLoginResponse{}, apperrors.InternalError()
 	}
 

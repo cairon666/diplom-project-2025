@@ -12,20 +12,20 @@ import (
 	"github.com/google/uuid"
 )
 
-// CreateSleepRequest представляет запрос на создание сна
+// CreateSleepRequest представляет запрос на создание сна.
 type CreateSleepRequest struct {
 	ID        *string `json:"id,omitempty"`
-	StartedAt string  `json:"started_at" binding:"required"`
-	EndedAt   string  `json:"ended_at" binding:"required"`
+	StartedAt string  `binding:"required"         json:"started_at"`
+	EndedAt   string  `binding:"required"         json:"ended_at"`
 	DeviceID  *string `json:"device_id,omitempty"`
 }
 
-// CreateSleepsRequest представляет запрос на создание множественных снов
+// CreateSleepsRequest представляет запрос на создание множественных снов.
 type CreateSleepsRequest struct {
-	Sleeps []CreateSleepRequest `json:"sleeps" binding:"required,min=1"`
+	Sleeps []CreateSleepRequest `binding:"required,min=1" json:"sleeps"`
 }
 
-// Response DTOs для router
+// Response DTOs для router.
 type SleepResponse struct {
 	ID        string    `json:"id"`
 	StartedAt time.Time `json:"started_at"`
@@ -41,7 +41,7 @@ type DailySleepResponse struct {
 	Sleeps map[string]float64 `json:"sleeps"` // key: day timestamp, value: duration in hours
 }
 
-// Функции конвертации
+// Функции конвертации.
 func convertToRouterSleep(sleep models.Sleep) SleepResponse {
 	var deviceID *string
 	if sleep.DeviceID != uuid.Nil {
@@ -62,14 +62,16 @@ func convertToRouterSleeps(sleeps []models.Sleep) []SleepResponse {
 	for i, sleep := range sleeps {
 		result[i] = convertToRouterSleep(sleep)
 	}
+
 	return result
 }
 
-// CreateSleep обрабатывает запрос на создание сна
+// CreateSleep обрабатывает запрос на создание сна.
 func (r *HealthRouter) CreateSleep(c *gin.Context) {
 	var req CreateSleepRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -83,6 +85,7 @@ func (r *HealthRouter) CreateSleep(c *gin.Context) {
 	}
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -92,6 +95,7 @@ func (r *HealthRouter) CreateSleep(c *gin.Context) {
 		deviceID, err = r.parseOptionalUUID(*req.DeviceID)
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 	}
@@ -100,6 +104,7 @@ func (r *HealthRouter) CreateSleep(c *gin.Context) {
 	startedAt, err := time.Parse(time.RFC3339, req.StartedAt)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -107,6 +112,7 @@ func (r *HealthRouter) CreateSleep(c *gin.Context) {
 	endedAt, err := time.Parse(time.RFC3339, req.EndedAt)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -114,17 +120,19 @@ func (r *HealthRouter) CreateSleep(c *gin.Context) {
 	_, err = r.healthUsecase.CreateSleep(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	c.Status(http.StatusCreated)
 }
 
-// CreateSleeps обрабатывает запрос на создание множественных снов
+// CreateSleeps обрабатывает запрос на создание множественных снов.
 func (r *HealthRouter) CreateSleeps(c *gin.Context) {
 	var req CreateSleepsRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -140,6 +148,7 @@ func (r *HealthRouter) CreateSleeps(c *gin.Context) {
 		}
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 
@@ -149,6 +158,7 @@ func (r *HealthRouter) CreateSleeps(c *gin.Context) {
 			deviceID, err = r.parseOptionalUUID(*sleepReq.DeviceID)
 			if err != nil {
 				www.HandleError(c, apperrors.InvalidParams())
+
 				return
 			}
 		}
@@ -157,6 +167,7 @@ func (r *HealthRouter) CreateSleeps(c *gin.Context) {
 		startedAt, err := time.Parse(time.RFC3339, sleepReq.StartedAt)
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 
@@ -164,6 +175,7 @@ func (r *HealthRouter) CreateSleeps(c *gin.Context) {
 		endedAt, err := time.Parse(time.RFC3339, sleepReq.EndedAt)
 		if err != nil {
 			www.HandleError(c, apperrors.InvalidParams())
+
 			return
 		}
 
@@ -174,17 +186,19 @@ func (r *HealthRouter) CreateSleeps(c *gin.Context) {
 	_, err := r.healthUsecase.CreateSleeps(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	c.Status(http.StatusCreated)
 }
 
-// GetSleeps обрабатывает запрос на получение снов
+// GetSleeps обрабатывает запрос на получение снов.
 func (r *HealthRouter) GetSleeps(c *gin.Context) {
 	from, to, err := r.parseDateRange(c)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -192,6 +206,7 @@ func (r *HealthRouter) GetSleeps(c *gin.Context) {
 	usecaseResp, err := r.healthUsecase.GetSleeps(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -203,11 +218,12 @@ func (r *HealthRouter) GetSleeps(c *gin.Context) {
 	c.JSON(http.StatusOK, routerResp)
 }
 
-// GetDailySleepDuration обрабатывает запрос на получение агрегированной продолжительности сна по дням
+// GetDailySleepDuration обрабатывает запрос на получение агрегированной продолжительности сна по дням.
 func (r *HealthRouter) GetDailySleepDuration(c *gin.Context) {
 	from, to, err := r.parseDateRange(c)
 	if err != nil {
 		www.HandleError(c, apperrors.InvalidParams())
+
 		return
 	}
 
@@ -215,6 +231,7 @@ func (r *HealthRouter) GetDailySleepDuration(c *gin.Context) {
 	usecaseResp, err := r.healthUsecase.GetDailySleepDuration(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

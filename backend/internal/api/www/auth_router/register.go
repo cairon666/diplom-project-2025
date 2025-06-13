@@ -19,12 +19,14 @@ func (r *AuthRouter) RegisterRoute(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.Bind(&req); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
 	dtoReq := auth_usecase.NewRegisterRequest(req.Email, req.Password, req.FirstName, req.SecondName)
 	if err := r.authUsecase.Register(c, dtoReq); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

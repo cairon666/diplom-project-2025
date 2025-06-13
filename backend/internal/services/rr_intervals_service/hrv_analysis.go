@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// CalculateHRVMetrics вычисляет метрики вариабельности сердечного ритма
+// CalculateHRVMetrics вычисляет метрики вариабельности сердечного ритма.
 func (s *RRIntervalsService) CalculateHRVMetrics(ctx context.Context, userID uuid.UUID, from, to time.Time) (*models.HRVMetrics, error) {
 	// Проверяем минимальную продолжительность для HRV анализа
 	minDuration := 5 * time.Minute
@@ -49,7 +49,7 @@ func (s *RRIntervalsService) CalculateHRVMetrics(ctx context.Context, userID uui
 	}, nil
 }
 
-// calculateRMSSD вычисляет RMSSD (Root Mean Square of Successive Differences)
+// calculateRMSSD вычисляет RMSSD (Root Mean Square of Successive Differences).
 func (s *RRIntervalsService) calculateRMSSD(values []int64) float64 {
 	if len(values) < 2 {
 		return 0
@@ -71,13 +71,14 @@ func (s *RRIntervalsService) calculateRMSSD(values []int64) float64 {
 	return math.Sqrt(sumSquares / float64(count))
 }
 
-// calculateSDNN вычисляет SDNN (Standard Deviation of NN intervals)
+// calculateSDNN вычисляет SDNN (Standard Deviation of NN intervals).
 func (s *RRIntervalsService) calculateSDNN(values []int64) float64 {
 	stats := s.calculateBasicStatistics(values)
+
 	return stats.StdDev
 }
 
-// calculatePNN50 вычисляет pNN50 (процент соседних интервалов, различающихся более чем на 50 мс)
+// calculatePNN50 вычисляет pNN50 (процент соседних интервалов, различающихся более чем на 50 мс).
 func (s *RRIntervalsService) calculatePNN50(values []int64) float64 {
 	if len(values) < 2 {
 		return 0
@@ -91,7 +92,7 @@ func (s *RRIntervalsService) calculatePNN50(values []int64) float64 {
 		if diff < 0 {
 			diff = -diff
 		}
-		
+
 		if diff > 50 {
 			count50++
 		}
@@ -105,7 +106,7 @@ func (s *RRIntervalsService) calculatePNN50(values []int64) float64 {
 	return float64(count50) / float64(totalPairs) * 100
 }
 
-// calculateTriangularIndex вычисляет треугольный индекс
+// calculateTriangularIndex вычисляет треугольный индекс.
 func (s *RRIntervalsService) calculateTriangularIndex(values []int64) float64 {
 	if len(values) < 10 {
 		return 0
@@ -114,17 +115,17 @@ func (s *RRIntervalsService) calculateTriangularIndex(values []int64) float64 {
 	// Строим гистограмму с bin width = 7.8125 мс (стандарт)
 	binWidth := int64(8) // Округляем до 8 мс
 	stats := s.calculateBasicStatistics(values)
-	
-	binsCount := int((stats.Max - stats.Min) / binWidth) + 1
+
+	binsCount := int((stats.Max-stats.Min)/binWidth) + 1
 	bins := make([]int, binsCount)
-	
+
 	for _, value := range values {
 		binIndex := int((value - stats.Min) / binWidth)
 		if binIndex >= 0 && binIndex < binsCount {
 			bins[binIndex]++
 		}
 	}
-	
+
 	// Находим максимальную высоту гистограммы
 	maxHeight := 0
 	for _, count := range bins {
@@ -132,18 +133,19 @@ func (s *RRIntervalsService) calculateTriangularIndex(values []int64) float64 {
 			maxHeight = count
 		}
 	}
-	
+
 	if maxHeight == 0 {
 		return 0
 	}
-	
+
 	return float64(len(values)) / float64(maxHeight)
 }
 
-// calculateTINN вычисляет TINN (Triangular Interpolation of NN histogram)
+// calculateTINN вычисляет TINN (Triangular Interpolation of NN histogram).
 func (s *RRIntervalsService) calculateTINN(values []int64) float64 {
 	// Упрощенная реализация TINN
 	// В полной реализации требуется триангулярная интерполяция
 	stats := s.calculateBasicStatistics(values)
+
 	return float64(stats.Max - stats.Min)
-} 
+}

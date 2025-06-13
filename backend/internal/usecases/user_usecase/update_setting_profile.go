@@ -27,6 +27,7 @@ func (userUsecase *UserUsecase) UpdateSettingProfile(ctx context.Context, dto Up
 	user, err := userUsecase.userService.GetUserById(ctx, authClaims.UserID)
 	if err != nil {
 		userUsecase.logger.Error("failed to get user by id", logger.Error(err))
+
 		return err
 	}
 
@@ -36,6 +37,7 @@ func (userUsecase *UserUsecase) UpdateSettingProfile(ctx context.Context, dto Up
 	err = userUsecase.userService.UpdateUser(ctx, user)
 	if err != nil {
 		userUsecase.logger.Error("failed to update user", logger.Error(err))
+
 		return err
 	}
 

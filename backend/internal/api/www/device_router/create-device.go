@@ -25,6 +25,7 @@ func (dr *DeviceRouter) CreateDevice(c *gin.Context) {
 	var req CreateDeviceRequest
 	if err := c.BindJSON(&req); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -32,6 +33,7 @@ func (dr *DeviceRouter) CreateDevice(c *gin.Context) {
 	resp, err := dr.deviceUsecase.CreateDevice(c.Request.Context(), dto)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

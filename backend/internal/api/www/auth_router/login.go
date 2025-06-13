@@ -22,6 +22,7 @@ func (r *AuthRouter) LoginRoute(c *gin.Context) {
 	var req LoginRequest
 	if err := c.Bind(&req); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -29,6 +30,7 @@ func (r *AuthRouter) LoginRoute(c *gin.Context) {
 	resp, err := r.authUsecase.Login(c, dtoReq)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

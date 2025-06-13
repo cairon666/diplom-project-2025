@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// GetRRIntervalsResponseDTO представляет HTTP ответ с R-R интервалами
+// GetRRIntervalsResponseDTO представляет HTTP ответ с R-R интервалами.
 type GetRRIntervalsResponseDTO struct {
 	Intervals  []RRIntervalResponseDTO `json:"intervals"`
 	TotalCount int                     `json:"total_count"`
@@ -30,6 +30,7 @@ func (r *RRIntervalsRouter) GetRRIntervals(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "from and to parameters are required (RFC3339 format)",
 		})
+
 		return
 	}
 
@@ -40,6 +41,7 @@ func (r *RRIntervalsRouter) GetRRIntervals(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid from time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -48,6 +50,7 @@ func (r *RRIntervalsRouter) GetRRIntervals(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid to time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -59,6 +62,7 @@ func (r *RRIntervalsRouter) GetRRIntervals(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "invalid device_id format",
 			})
+
 			return
 		}
 		deviceID = &parsedDeviceID
@@ -71,6 +75,7 @@ func (r *RRIntervalsRouter) GetRRIntervals(c *gin.Context) {
 	resp, err := r.rrIntervalsUsecase.GetRRIntervals(c.Request.Context(), usecaseReq)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -92,4 +97,4 @@ func (r *RRIntervalsRouter) GetRRIntervals(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, responseDTO)
-} 
+}

@@ -9,25 +9,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetHistogramResponseDTO представляет HTTP ответ с гистограммой
+// GetHistogramResponseDTO представляет HTTP ответ с гистограммой.
 type GetHistogramResponseDTO struct {
 	Histogram *RRHistogramDataDTO `json:"histogram"`
 	TimeRange TimeRangeDTO        `json:"time_range"`
 }
 
-// GetTrendsResponseDTO представляет HTTP ответ с анализом трендов
+// GetTrendsResponseDTO представляет HTTP ответ с анализом трендов.
 type GetTrendsResponseDTO struct {
 	TrendAnalysis *RRTrendAnalysisDTO `json:"trend_analysis"`
 	TimeRange     TimeRangeDTO        `json:"time_range"`
 }
 
-// GetHRVMetricsResponseDTO представляет HTTP ответ с HRV метриками
+// GetHRVMetricsResponseDTO представляет HTTP ответ с HRV метриками.
 type GetHRVMetricsResponseDTO struct {
 	HRVMetrics *HRVMetricsDTO `json:"hrv_metrics"`
 	TimeRange  TimeRangeDTO   `json:"time_range"`
 }
 
-// GetHistogram возвращает гистограмму R-R интервалов
+// GetHistogram возвращает гистограмму R-R интервалов.
 func (r *RRIntervalsRouter) GetHistogram(c *gin.Context) {
 	// Извлекаем query параметры
 	fromStr := c.Query("from")
@@ -39,6 +39,7 @@ func (r *RRIntervalsRouter) GetHistogram(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "from and to parameters are required (RFC3339 format)",
 		})
+
 		return
 	}
 
@@ -48,6 +49,7 @@ func (r *RRIntervalsRouter) GetHistogram(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid from time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -56,6 +58,7 @@ func (r *RRIntervalsRouter) GetHistogram(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid to time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -67,6 +70,7 @@ func (r *RRIntervalsRouter) GetHistogram(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "invalid bins_count parameter (expected 0-50)",
 			})
+
 			return
 		}
 	}
@@ -75,6 +79,7 @@ func (r *RRIntervalsRouter) GetHistogram(c *gin.Context) {
 	histogram, err := r.rrIntervalsUsecase.GetRRHistogram(c.Request.Context(), from, to, binsCount)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -90,7 +95,7 @@ func (r *RRIntervalsRouter) GetHistogram(c *gin.Context) {
 	c.JSON(http.StatusOK, responseDTO)
 }
 
-// GetTrends возвращает анализ трендов R-R интервалов
+// GetTrends возвращает анализ трендов R-R интервалов.
 func (r *RRIntervalsRouter) GetTrends(c *gin.Context) {
 	// Извлекаем query параметры
 	fromStr := c.Query("from")
@@ -102,6 +107,7 @@ func (r *RRIntervalsRouter) GetTrends(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "from and to parameters are required (RFC3339 format)",
 		})
+
 		return
 	}
 
@@ -111,6 +117,7 @@ func (r *RRIntervalsRouter) GetTrends(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid from time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -119,6 +126,7 @@ func (r *RRIntervalsRouter) GetTrends(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid to time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -130,6 +138,7 @@ func (r *RRIntervalsRouter) GetTrends(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "invalid window_size parameter (expected 1-60 minutes)",
 			})
+
 			return
 		}
 	}
@@ -138,6 +147,7 @@ func (r *RRIntervalsRouter) GetTrends(c *gin.Context) {
 	trends, err := r.rrIntervalsUsecase.GetRRTrends(c.Request.Context(), from, to, windowSize)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 
@@ -153,7 +163,7 @@ func (r *RRIntervalsRouter) GetTrends(c *gin.Context) {
 	c.JSON(http.StatusOK, responseDTO)
 }
 
-// GetHRVMetrics возвращает метрики вариабельности сердечного ритма
+// GetHRVMetrics возвращает метрики вариабельности сердечного ритма.
 func (r *RRIntervalsRouter) GetHRVMetrics(c *gin.Context) {
 	// Извлекаем query параметры
 	fromStr := c.Query("from")
@@ -164,6 +174,7 @@ func (r *RRIntervalsRouter) GetHRVMetrics(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "from and to parameters are required (RFC3339 format)",
 		})
+
 		return
 	}
 
@@ -173,6 +184,7 @@ func (r *RRIntervalsRouter) GetHRVMetrics(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid from time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -181,6 +193,7 @@ func (r *RRIntervalsRouter) GetHRVMetrics(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid to time format (expected RFC3339)",
 		})
+
 		return
 	}
 
@@ -188,6 +201,7 @@ func (r *RRIntervalsRouter) GetHRVMetrics(c *gin.Context) {
 	hrvMetrics, err := r.rrIntervalsUsecase.GetHRVMetrics(c.Request.Context(), from, to)
 	if err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

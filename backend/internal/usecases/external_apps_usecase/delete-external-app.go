@@ -30,6 +30,7 @@ func (uc *ExternalAppsUsecase) DeleteExternalApp(ctx context.Context, dto Delete
 	externalApp, err := uc.externalAppsService.GetByID(ctx, dto.ID)
 	if err != nil {
 		uc.logger.Error("failed to get external app", logger.Error(err))
+
 		return err
 	}
 
@@ -41,6 +42,7 @@ func (uc *ExternalAppsUsecase) DeleteExternalApp(ctx context.Context, dto Delete
 		return err
 	} else if err != nil {
 		uc.logger.Error("failed to delete external app", logger.Error(err))
+
 		return err
 	}
 

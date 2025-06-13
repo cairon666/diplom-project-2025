@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// GetRawValuesForAnalysis получает только значения R-R интервалов для статистического анализа
+// GetRawValuesForAnalysis получает только значения R-R интервалов для статистического анализа.
 func (r *RRIntervalsRepo) GetRawValuesForAnalysis(ctx context.Context, userID uuid.UUID, from, to time.Time) ([]int64, error) {
 	if from.After(to) {
 		return nil, apperrors.InvalidTimeRangef("from time (%v) cannot be after to time (%v)", from, to)
@@ -40,7 +40,7 @@ func (r *RRIntervalsRepo) GetRawValuesForAnalysis(ctx context.Context, userID uu
 	var values []int64
 	for result.Next() {
 		record := result.Record()
-		
+
 		// Извлекаем значение R-R интервала
 		rrIntervalMs, ok := record.Value().(int64)
 		if !ok {
@@ -51,7 +51,7 @@ func (r *RRIntervalsRepo) GetRawValuesForAnalysis(ctx context.Context, userID uu
 				continue
 			}
 		}
-		
+
 		// Дополнительная проверка на уровне Go (защита от edge cases)
 		if rrIntervalMs >= 300 && rrIntervalMs <= 2000 {
 			values = append(values, rrIntervalMs)
@@ -69,7 +69,7 @@ func (r *RRIntervalsRepo) GetRawValuesForAnalysis(ctx context.Context, userID uu
 	return values, nil
 }
 
-// GetValidRRIntervalsByUserID получает только валидные R-R интервалы пользователя (отфильтрованные)
+// GetValidRRIntervalsByUserID получает только валидные R-R интервалы пользователя (отфильтрованные).
 func (r *RRIntervalsRepo) GetValidRRIntervalsByUserID(ctx context.Context, userID uuid.UUID, from, to time.Time) ([]models.RRInterval, error) {
 	if from.After(to) {
 		return nil, apperrors.InvalidTimeRangef("from time (%v) cannot be after to time (%v)", from, to)
@@ -149,7 +149,7 @@ func (r *RRIntervalsRepo) GetValidRRIntervalsByUserID(ctx context.Context, userI
 	return rrIntervals, nil
 }
 
-// GetTimeSeriesForTrends получает временные ряды для анализа трендов
+// GetTimeSeriesForTrends получает временные ряды для анализа трендов.
 func (r *RRIntervalsRepo) GetTimeSeriesForTrends(ctx context.Context, userID uuid.UUID, from, to time.Time, windowSizeMinutes int) ([]models.TrendPoint, error) {
 	if from.After(to) {
 		return nil, apperrors.InvalidTimeRangef("from time (%v) cannot be after to time (%v)", from, to)
@@ -172,7 +172,7 @@ func (r *RRIntervalsRepo) GetTimeSeriesForTrends(ctx context.Context, userID uui
 		from.Format(time.RFC3339Nano),
 		to.Format(time.RFC3339Nano),
 		userID.String())
-	
+
 	queryAPI := r.influxClient.QueryAPI(r.org)
 	queryResult, err := queryAPI.Query(ctx, query)
 	if err != nil {
@@ -184,7 +184,7 @@ func (r *RRIntervalsRepo) GetTimeSeriesForTrends(ctx context.Context, userID uui
 	var rawData []models.TimeValue
 	for queryResult.Next() {
 		record := queryResult.Record()
-		
+
 		var rrValue int64
 		if intVal, ok := record.Value().(int64); ok {
 			rrValue = intVal
@@ -193,7 +193,7 @@ func (r *RRIntervalsRepo) GetTimeSeriesForTrends(ctx context.Context, userID uui
 		} else {
 			continue
 		}
-		
+
 		rawData = append(rawData, models.TimeValue{
 			Time:  record.Time(),
 			Value: rrValue,
@@ -222,22 +222,22 @@ func (r *RRIntervalsRepo) GetTimeSeriesForTrends(ctx context.Context, userID uui
 	// Преобразуем агрегированные данные в тренд-точки
 	var trendPoints []models.TrendPoint
 	var prevValue float64
-	
+
 	// Сортируем временные интервалы
 	var sortedTimes []time.Time
 	for t := range aggregatedData {
 		sortedTimes = append(sortedTimes, t)
 	}
-	
+
 	// Простая сортировка пузырьком
-	for i := 0; i < len(sortedTimes)-1; i++ {
+	for i := range len(sortedTimes) - 1 {
 		for j := i + 1; j < len(sortedTimes); j++ {
 			if sortedTimes[i].After(sortedTimes[j]) {
 				sortedTimes[i], sortedTimes[j] = sortedTimes[j], sortedTimes[i]
 			}
 		}
 	}
-	
+
 	for _, intervalTime := range sortedTimes {
 		values := aggregatedData[intervalTime]
 		if len(values) == 0 {
@@ -250,28 +250,28 @@ func (r *RRIntervalsRepo) GetTimeSeriesForTrends(ctx context.Context, userID uui
 			sum += val
 		}
 		meanValue := float64(sum) / float64(len(values))
-		
+
 		// Определяем направление тренда
 		direction := models.TrendDirectionStable
 		if len(trendPoints) > 0 {
 			diff := meanValue - prevValue
 			threshold := 10.0 // 10 мс порог для значимого изменения R-R интервала
-			
+
 			if diff > threshold {
 				direction = models.TrendDirectionUp
 			} else if diff < -threshold {
 				direction = models.TrendDirectionDown
 			}
 		}
-		
+
 		trendPoints = append(trendPoints, models.TrendPoint{
 			Time:      intervalTime,
 			Value:     meanValue,
 			Direction: direction,
 		})
-		
+
 		prevValue = meanValue
 	}
 
 	return trendPoints, nil
-} 
+}

@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// GetAggregatedByInterval получает агрегированные данные по временным интервалам
+// GetAggregatedByInterval получает агрегированные данные по временным интервалам.
 func (r *RRIntervalsRepo) GetAggregatedByInterval(ctx context.Context, userID uuid.UUID, from, to time.Time, intervalMinutes int) ([]models.AggregatedRRData, error) {
 	// Простой InfluxDB запрос с aggregateWindow
 	query := fmt.Sprintf(`
@@ -22,11 +22,11 @@ func (r *RRIntervalsRepo) GetAggregatedByInterval(ctx context.Context, userID uu
 		  |> filter(fn: (r) => r._value >= 300 and r._value <= 2000)
 		  |> aggregateWindow(every: %dm, fn: mean, createEmpty: false)
 		  |> sort(columns: ["_time"])
-	`, 
-		r.bucket, from.Format(time.RFC3339Nano), to.Format(time.RFC3339Nano), 
+	`,
+		r.bucket, from.Format(time.RFC3339Nano), to.Format(time.RFC3339Nano),
 		userID.String(), intervalMinutes,
 	)
-	
+
 	queryAPI := r.influxClient.QueryAPI(r.org)
 	queryResult, err := queryAPI.Query(ctx, query)
 	if err != nil {
@@ -37,7 +37,7 @@ func (r *RRIntervalsRepo) GetAggregatedByInterval(ctx context.Context, userID uu
 	var aggregatedResult []models.AggregatedRRData
 	for queryResult.Next() {
 		record := queryResult.Record()
-		
+
 		var meanValue float64
 		if floatVal, ok := record.Value().(float64); ok {
 			meanValue = floatVal
@@ -46,7 +46,7 @@ func (r *RRIntervalsRepo) GetAggregatedByInterval(ctx context.Context, userID uu
 		} else {
 			continue
 		}
-		
+
 		aggregatedResult = append(aggregatedResult, models.AggregatedRRData{
 			Time:   record.Time(),
 			Mean:   meanValue,
@@ -65,14 +65,14 @@ func (r *RRIntervalsRepo) GetAggregatedByInterval(ctx context.Context, userID uu
 }
 
 // GetCompleteAnalysisData получает все данные для комплексного анализа
-// Простая реализация для соответствия интерфейсу
+// Простая реализация для соответствия интерфейсу.
 func (r *RRIntervalsRepo) GetCompleteAnalysisData(ctx context.Context, userID uuid.UUID, from, to time.Time, options models.CompleteAnalysisOptions) (*models.CompleteAnalysisData, error) {
 	if from.After(to) {
 		return nil, apperrors.InvalidTimeRangef("from time (%v) cannot be after to time (%v)", from, to)
 	}
 
 	startTime := time.Now()
-	
+
 	// Получаем сырые данные
 	rawValues, err := r.GetRawValuesForAnalysis(ctx, userID, from, to)
 	if err != nil {
@@ -99,34 +99,34 @@ func (r *RRIntervalsRepo) GetCompleteAnalysisData(ctx context.Context, userID uu
 				From: from,
 				To:   to,
 			},
-			Statistics: &models.RRStatisticalSummary{},
-			HRVMetrics: &models.HRVMetrics{},
+			Statistics:     &models.RRStatisticalSummary{},
+			HRVMetrics:     &models.HRVMetrics{},
 			AggregatedData: []models.AggregatedRRData{},
 			TrendAnalysis: &models.RRTrendAnalysis{
-				Period: fmt.Sprintf("%v to %v", from.Format("15:04:05"), to.Format("15:04:05")),
-				TrendPoints: []models.TrendPoint{},
-				OverallTrend: "stable",
-				Correlation: 0,
-				Seasonality: []float64{},
+				Period:        fmt.Sprintf("%v to %v", from.Format("15:04:05"), to.Format("15:04:05")),
+				TrendPoints:   []models.TrendPoint{},
+				OverallTrend:  "stable",
+				Correlation:   0,
+				Seasonality:   []float64{},
 				TrendStrength: 0,
 			},
 			Histogram: &models.RRHistogramData{
-				Bins: []models.HistogramBin{},
+				Bins:       []models.HistogramBin{},
 				TotalCount: 0,
-				BinWidth: 0,
+				BinWidth:   0,
 				Statistics: &models.RRStatisticalSummary{},
 			},
 			DiffHistogram: &models.DifferentialHistogramData{
-				Bins: []models.DifferentialHistogramBin{},
+				Bins:       []models.DifferentialHistogramBin{},
 				TotalCount: 0,
-				BinWidth: 0,
+				BinWidth:   0,
 				Statistics: &models.DifferentialStatistics{},
 			},
 			Scatterplot: &models.ScatterplotData{
-				Points: []models.ScatterplotPoint{},
+				Points:     []models.ScatterplotPoint{},
 				TotalCount: 0,
 				Statistics: &models.ScatterplotStatistics{},
-				Ellipse: &models.PoincarePlotEllipse{},
+				Ellipse:    &models.PoincarePlotEllipse{},
 			},
 			ProcessingTime: time.Since(startTime),
 			DataQuality: &models.DataQualityMetrics{
@@ -161,30 +161,30 @@ func (r *RRIntervalsRepo) GetCompleteAnalysisData(ctx context.Context, userID uu
 		},
 		AggregatedData: aggregatedData,
 		TrendAnalysis: &models.RRTrendAnalysis{
-			Period: fmt.Sprintf("%v to %v", from.Format("15:04:05"), to.Format("15:04:05")),
-			TrendPoints: []models.TrendPoint{},
-			OverallTrend: "stable",
-			Correlation: 0,
-			Seasonality: []float64{},
+			Period:        fmt.Sprintf("%v to %v", from.Format("15:04:05"), to.Format("15:04:05")),
+			TrendPoints:   []models.TrendPoint{},
+			OverallTrend:  "stable",
+			Correlation:   0,
+			Seasonality:   []float64{},
 			TrendStrength: 0,
 		},
 		Histogram: &models.RRHistogramData{
-			Bins: []models.HistogramBin{},
+			Bins:       []models.HistogramBin{},
 			TotalCount: int64(len(rawValues)),
-			BinWidth: 0,
+			BinWidth:   0,
 			Statistics: statistics,
 		},
 		DiffHistogram: &models.DifferentialHistogramData{
-			Bins: []models.DifferentialHistogramBin{},
+			Bins:       []models.DifferentialHistogramBin{},
 			TotalCount: int64(len(rawValues)),
-			BinWidth: 0,
+			BinWidth:   0,
 			Statistics: &models.DifferentialStatistics{},
 		},
 		Scatterplot: &models.ScatterplotData{
-			Points: []models.ScatterplotPoint{},
+			Points:     []models.ScatterplotPoint{},
 			TotalCount: int64(len(rawValues)),
 			Statistics: &models.ScatterplotStatistics{},
-			Ellipse: &models.PoincarePlotEllipse{},
+			Ellipse:    &models.PoincarePlotEllipse{},
 		},
 		ProcessingTime: processingTime,
 		DataQuality: &models.DataQualityMetrics{
@@ -199,7 +199,7 @@ func (r *RRIntervalsRepo) GetCompleteAnalysisData(ctx context.Context, userID uu
 	}, nil
 }
 
-// Вспомогательная функция для расчета частоты дискретизации
+// Вспомогательная функция для расчета частоты дискретизации.
 func calculateSamplingRate(from, to time.Time, measurements int64) float64 {
 	if measurements == 0 {
 		return 0
@@ -208,5 +208,6 @@ func calculateSamplingRate(from, to time.Time, measurements int64) float64 {
 	if duration == 0 {
 		return 0
 	}
+
 	return float64(measurements) / duration
 }

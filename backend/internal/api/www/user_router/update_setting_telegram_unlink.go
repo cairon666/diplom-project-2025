@@ -10,6 +10,7 @@ import (
 func (r *UserRouter) UpdateSettingTelegramUnlink(c *gin.Context) {
 	if err := r.userUsecase.UpdateSettingTelegramUnlink(c.Request.Context()); err != nil {
 		www.HandleError(c, err)
+
 		return
 	}
 

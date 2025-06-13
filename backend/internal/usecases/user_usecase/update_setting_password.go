@@ -17,7 +17,6 @@ func NewUpdateSettingPasswordRequest(password string) UpdateSettingPasswordReque
 	return UpdateSettingPasswordRequest{
 		Password: password,
 	}
-
 }
 
 func (userUsecase *UserUsecase) UpdateSettingPassword(ctx context.Context, dto UpdateSettingPasswordRequest) error {
@@ -29,12 +28,14 @@ func (userUsecase *UserUsecase) UpdateSettingPassword(ctx context.Context, dto U
 	user, err := userUsecase.userService.GetUserById(ctx, authClaims.UserID)
 	if err != nil {
 		userUsecase.logger.Error("failed to get user by id", logger.Error(err))
+
 		return err
 	}
 
 	passwordHash, salt, err := userUsecase.passwordHasher.Hash(dto.Password)
 	if err != nil {
 		userUsecase.logger.Error("failed to hash password", logger.Error(err))
+
 		return apperrors.InternalError()
 	}
 
@@ -45,17 +46,20 @@ func (userUsecase *UserUsecase) UpdateSettingPassword(ctx context.Context, dto U
 		err = userUsecase.authService.CreateUserPassword(ctx, newUserPassword)
 		if err != nil {
 			userUsecase.logger.Error("failed to create user password", logger.Error(err))
+
 			return err
 		}
 
 		return nil
 	} else if err != nil {
 		userUsecase.logger.Error("failed to get user password by id", logger.Error(err))
+
 		return err
 	}
 
 	if err := userUsecase.authService.UpdateUserPassword(ctx, newUserPassword); err != nil {
 		userUsecase.logger.Error("failed to update user password", logger.Error(err))
+
 		return err
 	}
 

@@ -25,8 +25,10 @@ func (t *TempIdRepo) Get(ctx context.Context, tempId string) (string, error) {
 		if errors.Is(err, redis.Nil) {
 			return "", apperrors.NotFound()
 		}
+
 		return "", err
 	}
+
 	return result, nil
 }
 
@@ -40,6 +42,7 @@ func (t *TempIdRepo) Delete(ctx context.Context, tempId string) error {
 		if errors.Is(err, redis.Nil) {
 			return apperrors.NotFound()
 		}
+
 		return err
 	}
 

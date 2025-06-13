@@ -84,7 +84,7 @@ type GetDailySleepDurationResponse struct {
 	SleepDurations map[time.Time]float64
 }
 
-// CreateSleep создает запись о сне
+// CreateSleep создает запись о сне.
 func (u *HealthUsecase) CreateSleep(ctx context.Context, dto CreateSleepRequest) (CreateSleepResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -101,13 +101,14 @@ func (u *HealthUsecase) CreateSleep(ctx context.Context, dto CreateSleepRequest)
 	err := u.healthService.CreateSleep(ctx, sleep)
 	if err != nil {
 		u.logger.Error("failed to create sleep", logger.Error(err))
+
 		return CreateSleepResponse{}, err
 	}
 
 	return CreateSleepResponse{}, nil
 }
 
-// CreateSleeps создает множественные записи о сне
+// CreateSleeps создает множественные записи о сне.
 func (u *HealthUsecase) CreateSleeps(ctx context.Context, dto CreateSleepsRequest) (CreateSleepsResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -127,13 +128,14 @@ func (u *HealthUsecase) CreateSleeps(ctx context.Context, dto CreateSleepsReques
 	err := u.healthService.CreateSleeps(ctx, sleeps)
 	if err != nil {
 		u.logger.Error("failed to create sleeps", logger.Error(err))
+
 		return CreateSleepsResponse{}, err
 	}
 
 	return CreateSleepsResponse{}, nil
 }
 
-// GetSleeps получает сырые данные о сне
+// GetSleeps получает сырые данные о сне.
 func (u *HealthUsecase) GetSleeps(ctx context.Context, dto GetSleepsRequest) (GetSleepsResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -144,13 +146,14 @@ func (u *HealthUsecase) GetSleeps(ctx context.Context, dto GetSleepsRequest) (Ge
 	sleeps, err := u.healthService.GetSleeps(ctx, authClaims.UserID, dto.From, dto.To)
 	if err != nil {
 		u.logger.Error("failed to get sleeps", logger.Error(err))
+
 		return GetSleepsResponse{}, err
 	}
 
 	return GetSleepsResponse{Sleeps: sleeps}, nil
 }
 
-// GetDailySleepDuration получает продолжительность сна по дням
+// GetDailySleepDuration получает продолжительность сна по дням.
 func (u *HealthUsecase) GetDailySleepDuration(ctx context.Context, dto GetDailySleepDurationRequest) (GetDailySleepDurationResponse, error) {
 	// Проверяем авторизацию и права доступа
 	authClaims, ok := indentity.GetAuthClaims(ctx)
@@ -161,8 +164,9 @@ func (u *HealthUsecase) GetDailySleepDuration(ctx context.Context, dto GetDailyS
 	sleepDurations, err := u.aggregationService.GetDailySleepDuration(ctx, authClaims.UserID, dto.From, dto.To)
 	if err != nil {
 		u.logger.Error("failed to get daily sleep duration", logger.Error(err))
+
 		return GetDailySleepDurationResponse{}, err
 	}
 
 	return GetDailySleepDurationResponse{SleepDurations: sleepDurations}, nil
-} 
+}

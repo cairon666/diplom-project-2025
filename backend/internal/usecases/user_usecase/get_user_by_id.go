@@ -35,5 +35,6 @@ func (userUsecase *UserUsecase) GetUserById(ctx context.Context) (GetUserByIdRes
 	}
 
 	resDTO := NewGetUserByIdResponse(user.ID, user.Email, user.FirstName, user.LastName)
+
 	return resDTO, nil
 }

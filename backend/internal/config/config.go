@@ -14,17 +14,17 @@ import (
 	"github.com/knadh/koanf/v2"
 )
 
-// DatabaseConfig contains database-related configuration
+// DatabaseConfig contains database-related configuration.
 type DatabaseConfig struct {
 	PostgresURL string
 }
 
-// ServerConfig contains web server configuration
+// ServerConfig contains web server configuration.
 type ServerConfig struct {
 	Port int
 }
 
-// JWTConfig contains JWT-related configuration
+// JWTConfig contains JWT-related configuration.
 type JWTConfig struct {
 	Secret               string
 	AccessTokenDuration  time.Duration
@@ -32,24 +32,24 @@ type JWTConfig struct {
 	Issuer               string
 }
 
-// LogConfig contains logging configuration
+// LogConfig contains logging configuration.
 type LogConfig struct {
 	Out string
 }
 
-// RedisConfig contains Redis configuration
+// RedisConfig contains Redis configuration.
 type RedisConfig struct {
 	Addr     string
 	Password string
 	DB       int
 }
 
-// TelegramConfig contains Telegram bot configuration
+// TelegramConfig contains Telegram bot configuration.
 type TelegramConfig struct {
 	BotToken string
 }
 
-// InfluxDBConfig contains InfluxDB configuration
+// InfluxDBConfig contains InfluxDB configuration.
 type InfluxDBConfig struct {
 	URL    string
 	Token  string
@@ -57,7 +57,7 @@ type InfluxDBConfig struct {
 	Bucket string
 }
 
-// Config represents the application configuration
+// Config represents the application configuration.
 type Config struct {
 	Database      DatabaseConfig
 	WWW           ServerConfig
@@ -69,19 +69,19 @@ type Config struct {
 	DeveloperMode bool
 }
 
-// Loader handles configuration loading
+// Loader handles configuration loading.
 type Loader struct {
 	k *koanf.Koanf
 }
 
-// NewLoader creates a new configuration loader
+// NewLoader creates a new configuration loader.
 func NewLoader() *Loader {
 	return &Loader{
 		k: koanf.New("."),
 	}
 }
 
-// LoadConfig loads configuration from file and environment variables
+// LoadConfig loads configuration from file and environment variables.
 func (l *Loader) LoadConfig(filepath string) (*Config, error) {
 	// Set defaults
 	if err := l.setDefaults(); err != nil {
@@ -114,7 +114,7 @@ func (l *Loader) LoadConfig(filepath string) (*Config, error) {
 	return config, nil
 }
 
-// GetDefaults returns default configuration values
+// GetDefaults returns default configuration values.
 func GetDefaults() map[string]interface{} {
 	return map[string]interface{}{
 		"postgres.url":               "postgres://user:password@localhost:5432/db",
@@ -138,6 +138,7 @@ func GetDefaults() map[string]interface{} {
 
 func (l *Loader) setDefaults() error {
 	defaultConfig := GetDefaults()
+
 	return l.k.Load(confmap.Provider(defaultConfig, "."), nil)
 }
 
@@ -158,7 +159,7 @@ func (l *Loader) loadFromEnv() error {
 
 func (l *Loader) parseToConfig() (*Config, error) {
 	var cfg Config
-	
+
 	// Manual parsing to ensure compatibility
 	cfg.Database.PostgresURL = l.k.String("postgres.url")
 	cfg.WWW.Port = l.k.Int("www.port")
@@ -219,13 +220,14 @@ func getParser(filepath string) (koanf.Parser, error) {
 	}
 }
 
-// Convenience function for backward compatibility
+// Convenience function for backward compatibility.
 func GetConfig(filepath string) (*Config, error) {
 	loader := NewLoader()
+
 	return loader.LoadConfig(filepath)
 }
 
-// Helper methods for Config struct
+// Helper methods for Config struct.
 func (c *Config) IsProduction() bool {
 	return !c.DeveloperMode
 }

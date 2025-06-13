@@ -31,6 +31,7 @@ func (r *DeviceRepo) Create(ctx context.Context, device models.Device) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -40,8 +41,10 @@ func (r *DeviceRepo) GetByID(ctx context.Context, id uuid.UUID) (models.Device, 
 		if errors.Is(err, pgx.ErrNoRows) {
 			return models.Device{}, apperrors.NotFound()
 		}
+
 		return models.Device{}, err
 	}
+
 	return mapToModel(dbDevice), nil
 }
 
@@ -58,6 +61,7 @@ func (r *DeviceRepo) ListByUserID(ctx context.Context, userID uuid.UUID) ([]mode
 	for _, d := range dbDevices {
 		result = append(result, mapToModel(d))
 	}
+
 	return result, nil
 }
 
@@ -69,6 +73,7 @@ func (r *DeviceRepo) UpdateName(ctx context.Context, id uuid.UUID, name string) 
 	if err != nil {
 		return models.Device{}, err
 	}
+
 	return mapToModel(dbDevice), nil
 }
 
@@ -77,10 +82,11 @@ func (r *DeviceRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	if errors.Is(err, pgx.ErrNoRows) {
 		return apperrors.NotFound()
 	}
+
 	return nil
 }
 
-// Вспомогательная функция маппинга
+// Вспомогательная функция маппинга.
 func mapToModel(d dbqueries.DEVICE) models.Device {
 	return models.Device{
 		ID:         d.ID,
