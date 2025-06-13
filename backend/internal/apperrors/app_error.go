@@ -12,6 +12,7 @@ type Error struct {
 	message  string
 	httpCode int
 	fields   map[string]interface{}
+	cause    error // wrapped error
 }
 
 // Реализация интерфейса AppError.
@@ -57,6 +58,7 @@ func (e *Error) WithMessage(message string) AppError {
 		message:  message,
 		httpCode: e.httpCode,
 		fields:   copyFields(e.fields),
+		cause:    e.cause,
 	}
 }
 
@@ -72,6 +74,7 @@ func (e *Error) WithField(key string, value interface{}) AppError {
 		message:  e.message,
 		httpCode: e.httpCode,
 		fields:   fields,
+		cause:    e.cause,
 	}
 }
 
@@ -90,6 +93,7 @@ func (e *Error) WithFields(newFields map[string]interface{}) AppError {
 		message:  e.message,
 		httpCode: e.httpCode,
 		fields:   fields,
+		cause:    e.cause,
 	}
 }
 
@@ -104,6 +108,7 @@ func (b *errorBuilder) Build() AppError {
 		message:  b.err.message,
 		httpCode: b.err.httpCode,
 		fields:   copyFields(b.err.fields),
+		cause:    b.err.cause,
 	}
 }
 
@@ -140,6 +145,7 @@ func New(code ErrorCode, message string, httpCode int) AppError {
 		message:  message,
 		httpCode: httpCode,
 		fields:   nil,
+		cause:    nil,
 	}
 }
 
@@ -150,17 +156,41 @@ func NewBuilder(code ErrorCode, message string, httpCode int) ErrorBuilder {
 			message:  message,
 			httpCode: httpCode,
 			fields:   nil,
+			cause:    nil,
 		},
 	}
 }
 
-// Функции для создания ошибок с параметрами.
+// Newf Функции для создания ошибок с параметрами.
 func Newf(code ErrorCode, httpCode int, format string, args ...interface{}) AppError {
 	return &Error{
 		code:     code,
 		message:  fmt.Sprintf(format, args...),
 		httpCode: httpCode,
 		fields:   nil,
+		cause:    nil,
+	}
+}
+
+// NewWithCause создает ошибку с обернутой ошибкой.
+func NewWithCause(code ErrorCode, message string, httpCode int, cause error) AppError {
+	return &Error{
+		code:     code,
+		message:  message,
+		httpCode: httpCode,
+		fields:   nil,
+		cause:    cause,
+	}
+}
+
+// NewfWithCause создает ошибку с форматированным сообщением и обернутой ошибкой.
+func NewfWithCause(code ErrorCode, httpCode int, cause error, format string, args ...interface{}) AppError {
+	return &Error{
+		code:     code,
+		message:  fmt.Sprintf(format, args...),
+		httpCode: httpCode,
+		fields:   nil,
+		cause:    cause,
 	}
 }
 
@@ -215,6 +245,14 @@ func InternalErrorf(format string, args ...interface{}) AppError {
 	return Newf(CodeInternalError, http.StatusInternalServerError, format, args...)
 }
 
+func InternalErrorWithCause(cause error) AppError {
+	return NewWithCause(CodeInternalError, "internal error", http.StatusInternalServerError, cause)
+}
+
+func InternalErrorfWithCause(cause error, format string, args ...interface{}) AppError {
+	return NewfWithCause(CodeInternalError, http.StatusInternalServerError, cause, format, args...)
+}
+
 func InvalidToken() AppError {
 	return New(CodeInvalidToken, "invalid token", http.StatusUnauthorized)
 }
@@ -257,4 +295,18 @@ func TelegramIsNotLinked() AppError {
 
 func NeedEndRegistration() AppError {
 	return New(CodeNeedEndRegistration, "need end registration", http.StatusBadRequest)
+}
+
+// Unwrap возвращает обернутую ошибку для поддержки errors.Unwrap.
+func (e *Error) Unwrap() error {
+	return e.cause
+}
+
+// FullMessage возвращает полное сообщение с учетом обернутой ошибки.
+func (e *Error) FullMessage() string {
+	if e.cause == nil {
+		return e.message
+	}
+
+	return fmt.Sprintf("%s: %v", e.message, e.cause)
 }

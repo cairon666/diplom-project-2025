@@ -2,6 +2,7 @@ package role_service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cairon666/vkr-backend/internal/apperrors"
 	"github.com/cairon666/vkr-backend/internal/models"
@@ -31,7 +32,7 @@ func NewRoleService(rolesRepo RoleRepos) *RoleService {
 func (roleService *RoleService) HasPermission(ctx context.Context, userID uuid.UUID, permission string) (bool, error) {
 	perms, err := roleService.rolesRepo.GetPermissionsByUserID(ctx, userID)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("get permissions by user id: %w", err)
 	}
 
 	for _, p := range perms {
@@ -46,7 +47,7 @@ func (roleService *RoleService) HasPermission(ctx context.Context, userID uuid.U
 func (roleService *RoleService) HasOneOfPermissions(ctx context.Context, userID uuid.UUID, permissions []string) (bool, error) {
 	perms, err := roleService.rolesRepo.GetPermissionsByUserID(ctx, userID)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("get permissions by user id: %w", err)
 	}
 
 	for _, p := range perms {
@@ -63,7 +64,7 @@ func (roleService *RoleService) HasOneOfPermissions(ctx context.Context, userID 
 func (roleService *RoleService) AssignRoleToUser(ctx context.Context, userID uuid.UUID, roleName string) error {
 	role, err := roleService.rolesRepo.GetRoleByName(ctx, roleName)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get role: %w", err)
 	}
 
 	if err := roleService.rolesRepo.AssignRoleToUser(ctx, userID, role.ID); err != nil {
@@ -74,21 +75,31 @@ func (roleService *RoleService) AssignRoleToUser(ctx context.Context, userID uui
 }
 
 func (roleService *RoleService) GetPermissionsByExternalAppUserID(ctx context.Context, userID uuid.UUID) ([]models.Permission, error) {
-	return roleService.rolesRepo.GetPermissionsByExternalAppID(ctx, userID)
+	permissions, err := roleService.rolesRepo.GetPermissionsByExternalAppID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("get permissions by external app id: %w", err)
+	}
+
+	return permissions, nil
 }
 
 func (roleService *RoleService) GetRolesByExternalAppID(ctx context.Context, userID uuid.UUID) ([]models.Role, error) {
-	return roleService.rolesRepo.GetRolesByExternalAppID(ctx, userID)
+	roles, err := roleService.rolesRepo.GetRolesByExternalAppID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("get roles by external app id: %w", err)
+	}
+
+	return roles, nil
 }
 
 func (roleService *RoleService) AssignRoleToExternalApp(ctx context.Context, externalID uuid.UUID, roleName string) error {
 	role, err := roleService.rolesRepo.GetRoleByName(ctx, roleName)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get role: %w", err)
 	}
 
 	if err := roleService.rolesRepo.AssignRoleToExternalApp(ctx, externalID, role.ID); err != nil {
-		return err
+		return fmt.Errorf("failed to assign role: %w", err)
 	}
 
 	return nil

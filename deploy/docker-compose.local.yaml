@@ -17,6 +17,30 @@ services:
       POSTGRES_DB: postgres
     networks:
       - vkr-network
+  migrations:
+    build:
+      context: ../backend/migrations
+      dockerfile: Dockerfile
+    container_name: vkr-migrations
+    environment:
+      GOOSE_DRIVER: postgres
+      GOOSE_MIGRATION_DIR: /migrations
+      GOOSE_DBSTRING: postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
+      GOOSE_DB_HOST: postgres
+      GOOSE_DB_PORT: 5432
+      GOOSE_DB_USER: postgres
+    depends_on:
+      postgres:
+        condition: service_started
+    networks:
+      - vkr-network
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "/healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
   redis:
     image: redis:7-alpine
     container_name: redis

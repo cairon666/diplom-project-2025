@@ -1,0 +1,23 @@
+version: "3"
+
+tasks:
+  up:
+    preconditions:
+      - test -f ./docker-compose.yaml
+    cmds:
+      - docker compose up -d
+  down:
+    preconditions:
+      - test -f ./docker-compose.yaml
+    cmds:
+      - docker compose down -v
+  local.up:
+    preconditions:
+      - test -f ./docker-compose.local.yaml
+    cmds:
+      - docker compose -f ./docker-compose.local.yaml up -d
+  local.down:
+    preconditions:
+      - test -f ./docker-compose.local.yaml
+    cmds:
+      - docker compose -f ./docker-compose.local.yaml down -v

@@ -5,11 +5,11 @@ linters:
     - depguard
     - exhaustruct
     - wsl
+    - revive
+# TODO remove
+    - lll
   settings:
     tagliatelle:
       case:
         rules:
           json: snake
-issues:
-  fix: true
-  new: true
