@@ -14,7 +14,7 @@ pre-commit:
     - name: backend-golangci-lint
       glob: "**/*.{go,go.mod,go.sum}"
       root: backend/
-      run: golangci-lint run ./...
+      run: golangci-lint run ./... --new
 
 pre-push:
   parallel: true
@@ -27,9 +27,7 @@ pre-push:
       run: npm run test
     - name: backend-build-www
       root: backend/
-      run: go build -o /dev/null ./cmd/www
-    # TODO: add backend test (#5)
+      run: task build
     - name: backend-test
-      skip: true
       root: backend/
-      run: go test ./...
+      run: task test

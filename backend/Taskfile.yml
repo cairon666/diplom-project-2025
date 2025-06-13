@@ -1,0 +1,36 @@
+version: "3"
+
+tasks:
+  build:
+    cmds:
+      - go build -o build/www ./cmd/www
+  dev:
+    cmds:
+      - go run cmd/www/main.go -config ./config/config.local.yaml
+  generate:
+    cmds:
+      - sqlc generate
+      - mockery
+  test:
+    deps: [generate]
+    cmds:
+      - go test ./... -v
+  test.coverage:
+    deps: [generate]
+    desc: "Run tests with coverage"
+    cmds:
+      - mkdir -p coverage
+      - go test ./... -coverprofile=coverage/coverage.out
+      - go tool cover -html=coverage/coverage.out -o coverage/coverage.html
+  deps:
+    desc: "Install development dependencies"
+    cmds:
+      - go install github.com/vektra/mockery/v3@v3.3.6
+      - go install github.com/pressly/goose/v3/cmd/goose@3.24.1
+      - go install github.com/sqlc-dev/sqlc/cmd/sqlc@1.28.0
+  lint:
+    cmds:
+      - golangci-lint run ./...
+  lint.fix:
+    cmds:
+      - golangci-lint run ./... --new --fix

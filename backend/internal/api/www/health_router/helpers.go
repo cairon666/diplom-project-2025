@@ -34,7 +34,7 @@ func (r *HealthRouter) parseDateRange(c *gin.Context) (time.Time, time.Time, err
 
 	if toStr != "" {
 		to, err = time.Parse("2006-01-02", toStr)
-		if err != nil {
+		if err != nil {	
 			return time.Time{}, time.Time{}, err
 		}
 	} else {

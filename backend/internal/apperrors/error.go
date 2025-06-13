@@ -9,6 +9,8 @@ type AppError interface {
 	WithMessage(message string) AppError
 	WithField(key string, value interface{}) AppError
 	WithFields(fields map[string]interface{}) AppError
+	Unwrap() error
+	FullMessage() string
 }
 
 // ErrorBuilder - интерфейс для создания ошибок.

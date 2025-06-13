@@ -1,0 +1,7 @@
+# Test coverage files
+coverage/
+
+# Test artifacts
+*.test
+
+build/

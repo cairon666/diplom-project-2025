@@ -38,14 +38,6 @@ type EXTERNALAPPSROLE struct {
 	RoleID        int32
 }
 
-type HEARTRATE struct {
-	ID        uuid.UUID
-	UserID    uuid.UUID
-	DeviceID  uuid.UUID
-	Bpm       int32
-	CreatedAt time.Time
-}
-
 type PERMISSION struct {
 	ID   int32
 	Name string
@@ -59,30 +51,6 @@ type ROLE struct {
 type ROLEPERMISSION struct {
 	RoleID       int32
 	PermissionID int32
-}
-
-type SLEEP struct {
-	ID        uuid.UUID
-	UserID    uuid.UUID
-	DeviceID  uuid.UUID
-	StartedAt time.Time
-	EndedAt   time.Time
-}
-
-type STEP struct {
-	ID        uuid.UUID
-	UserID    uuid.UUID
-	DeviceID  uuid.UUID
-	StepCount int32
-	CreatedAt time.Time
-}
-
-type TEMPERATURE struct {
-	ID                 uuid.UUID
-	UserID             uuid.UUID
-	DeviceID           uuid.UUID
-	TemperatureCelsius float64
-	CreatedAt          time.Time
 }
 
 type USER struct {
@@ -103,12 +71,4 @@ type USERPASSWORD struct {
 type USERROLE struct {
 	UserID uuid.UUID
 	RoleID int32
-}
-
-type WEIGHT struct {
-	ID        uuid.UUID
-	UserID    uuid.UUID
-	DeviceID  uuid.UUID
-	WeightKg  float64
-	CreatedAt time.Time
 }
