@@ -1,20 +1,23 @@
 # Многоэтапная сборка для React приложения
 FROM node:20-alpine AS builder
 
+# Включаем pnpm через corepack
+RUN corepack enable
+
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем package.json и package-lock.json для кэширования зависимостей
-COPY package*.json ./
+# Копируем package.json и pnpm-lock.yaml для кэширования зависимостей
+COPY package.json pnpm-lock.yaml* ./
 
 # Устанавливаем зависимости (включая dev dependencies для сборки)
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
 # Копируем исходный код
 COPY . .
 
 # Собираем приложение для продакшена
-RUN npm run build
+RUN pnpm run build
 
 # Продакшн стадия с nginx
 FROM nginx:alpine

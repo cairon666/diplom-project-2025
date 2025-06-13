@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Generated files
+*.gen.ts
+*.gen.js
+*.d.ts
+
+# Config files that shouldn't be formatted
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.production 

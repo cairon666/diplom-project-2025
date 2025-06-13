@@ -1,0 +1,63 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source code
+*.go text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.html text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Config files
+*.conf text eol=lf
+*.config text eol=lf
+*.ini text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+
+# Lockfiles should always have LF line endings
+package-lock.json text eol=lf
+yarn.lock text eol=lf
+go.sum text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.tar.gz binary
+*.tgz binary
+
+# Fonts
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.ttf binary
+*.otf binary
+
+# Generated files (exclude from git stats)
+package-lock.json linguist-generated=true
+*.min.js linguist-generated=true
+*.min.css linguist-generated=true
+/frontend/dist/* linguist-generated=true
+/backend/coverage/* linguist-generated=true
+/frontend/coverage/* linguist-generated=true 
