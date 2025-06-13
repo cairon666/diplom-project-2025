@@ -5,12 +5,12 @@ pre-commit:
       root: frontend/
       glob: "**/*.{js,jsx,ts,tsx,css,scss}"
       stage_fixed: true
-      run: npx eslint --fix {staged_files}
+      run: pnpm exec eslint --fix {staged_files}
     - name: frontend-prettier
       root: frontend/
       glob: "**/*.{js,jsx,ts,tsx,css,scss,json}"
       stage_fixed: true
-      run: npx prettier --write {staged_files}
+      run: pnpm exec prettier --write {staged_files}
     - name: backend-golangci-lint
       glob: "**/*.{go,go.mod,go.sum}"
       root: backend/
@@ -21,10 +21,10 @@ pre-push:
   jobs:
     - name: frontend-build
       root: frontend/
-      run: npm run build
+      run: pnpm run build
     - name: frontend-test
       root: frontend/
-      run: npm run test
+      run: pnpm run test
     - name: backend-build-www
       root: backend/
       run: task build

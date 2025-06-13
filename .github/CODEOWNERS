@@ -1,0 +1,26 @@
+# Global owners - обязательно поменяйте на ваших пользователей
+* @cairon666
+
+# Backend changes
+/backend/ @cairon666
+
+# Frontend changes  
+/frontend/ @cairon666
+
+# CI/CD and deployment
+/.github/ @cairon666
+/deploy/ @cairon666
+Taskfile.yml @cairon666
+
+# Documentation
+*.md @cairon666
+/docs/ @cairon666
+
+# Database migrations - требуют особого внимания
+/backend/migrations/ @cairon666
+
+# Configuration files - критичные для работы
+/backend/config/ @cairon666
+/frontend/rsbuild.config.ts @cairon666
+/frontend/package.json @cairon666
+/backend/go.mod @cairon666 

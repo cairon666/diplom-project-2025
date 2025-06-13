@@ -35,7 +35,7 @@ export default defineConfig({
             plugins: [
                 TanStackRouterRspack({
                     target: 'react',
-                    autoCodeSplitting: true,
+                    autoCodeSplitting: false,
                     routesDirectory: './src/app/routes',
                     generatedRouteTree: './src/app/routeTree.gen.ts',
                 }),

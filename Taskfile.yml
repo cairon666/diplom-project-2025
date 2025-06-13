@@ -14,4 +14,4 @@ tasks:
   frontend.dev:
     dir: ./frontend
     cmds:
-      - npm run dev
+      - pnpm run dev
