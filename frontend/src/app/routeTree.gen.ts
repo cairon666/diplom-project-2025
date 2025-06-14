@@ -8,298 +8,217 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as PanelRouteRouteImport } from './routes/panel/route'
-import { Route as AuthRouteRouteImport } from './routes/auth/route'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as PanelIndexRouteImport } from './routes/panel/index'
-import { Route as AuthIndexRouteImport } from './routes/auth/index'
-import { Route as PanelDevicesRouteImport } from './routes/panel/devices'
-import { Route as PanelComparativeAnalysisRouteImport } from './routes/panel/comparative-analysis'
-import { Route as AuthTelegramConfirmRegisterRouteImport } from './routes/auth/telegram-confirm-register'
-import { Route as AuthRegisterRouteImport } from './routes/auth/register'
-import { Route as AuthRecoverRouteImport } from './routes/auth/recover'
-import { Route as AuthLoginRouteImport } from './routes/auth/login'
-import { Route as PanelSettingsRouteRouteImport } from './routes/panel/settings/route'
-import { Route as PanelSettingsIndexRouteImport } from './routes/panel/settings/index'
-import { Route as PanelSettingsExternalAppsRouteImport } from './routes/panel/settings/external-apps'
+// Import Routes
 
-const PanelRouteRoute = PanelRouteRouteImport.update({
+import { Route as rootRoute } from './routes/__root'
+import { Route as PanelRouteImport } from './routes/panel/route'
+import { Route as AuthRouteImport } from './routes/auth/route'
+import { Route as IndexImport } from './routes/index'
+import { Route as PanelIndexImport } from './routes/panel/index'
+import { Route as AuthIndexImport } from './routes/auth/index'
+import { Route as PanelDevicesImport } from './routes/panel/devices'
+import { Route as PanelComparativeAnalysisImport } from './routes/panel/comparative-analysis'
+import { Route as AuthTelegramConfirmRegisterImport } from './routes/auth/telegram-confirm-register'
+import { Route as AuthRegisterImport } from './routes/auth/register'
+import { Route as AuthRecoverImport } from './routes/auth/recover'
+import { Route as AuthLoginImport } from './routes/auth/login'
+import { Route as PanelSettingsRouteImport } from './routes/panel/settings/route'
+import { Route as PanelSettingsIndexImport } from './routes/panel/settings/index'
+import { Route as PanelSettingsExternalAppsImport } from './routes/panel/settings/external-apps'
+
+// Create/Update Routes
+
+const PanelRouteRoute = PanelRouteImport.update({
   id: '/panel',
   path: '/panel',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const AuthRouteRoute = AuthRouteRouteImport.update({
+
+const AuthRouteRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+
+const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const PanelIndexRoute = PanelIndexRouteImport.update({
+
+const PanelIndexRoute = PanelIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PanelRouteRoute,
 } as any)
-const AuthIndexRoute = AuthIndexRouteImport.update({
+
+const AuthIndexRoute = AuthIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const PanelDevicesRoute = PanelDevicesRouteImport.update({
+
+const PanelDevicesRoute = PanelDevicesImport.update({
   id: '/devices',
   path: '/devices',
   getParentRoute: () => PanelRouteRoute,
 } as any)
-const PanelComparativeAnalysisRoute =
-  PanelComparativeAnalysisRouteImport.update({
-    id: '/comparative-analysis',
-    path: '/comparative-analysis',
-    getParentRoute: () => PanelRouteRoute,
-  } as any)
+
+const PanelComparativeAnalysisRoute = PanelComparativeAnalysisImport.update({
+  id: '/comparative-analysis',
+  path: '/comparative-analysis',
+  getParentRoute: () => PanelRouteRoute,
+} as any)
+
 const AuthTelegramConfirmRegisterRoute =
-  AuthTelegramConfirmRegisterRouteImport.update({
+  AuthTelegramConfirmRegisterImport.update({
     id: '/telegram-confirm-register',
     path: '/telegram-confirm-register',
     getParentRoute: () => AuthRouteRoute,
   } as any)
-const AuthRegisterRoute = AuthRegisterRouteImport.update({
+
+const AuthRegisterRoute = AuthRegisterImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const AuthRecoverRoute = AuthRecoverRouteImport.update({
+
+const AuthRecoverRoute = AuthRecoverImport.update({
   id: '/recover',
   path: '/recover',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const AuthLoginRoute = AuthLoginRouteImport.update({
+
+const AuthLoginRoute = AuthLoginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const PanelSettingsRouteRoute = PanelSettingsRouteRouteImport.update({
+
+const PanelSettingsRouteRoute = PanelSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => PanelRouteRoute,
 } as any)
-const PanelSettingsIndexRoute = PanelSettingsIndexRouteImport.update({
+
+const PanelSettingsIndexRoute = PanelSettingsIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PanelSettingsRouteRoute,
 } as any)
-const PanelSettingsExternalAppsRoute =
-  PanelSettingsExternalAppsRouteImport.update({
-    id: '/external-apps',
-    path: '/external-apps',
-    getParentRoute: () => PanelSettingsRouteRoute,
-  } as any)
 
-export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/auth': typeof AuthRouteRouteWithChildren
-  '/panel': typeof PanelRouteRouteWithChildren
-  '/panel/settings': typeof PanelSettingsRouteRouteWithChildren
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/recover': typeof AuthRecoverRoute
-  '/auth/register': typeof AuthRegisterRoute
-  '/auth/telegram-confirm-register': typeof AuthTelegramConfirmRegisterRoute
-  '/panel/comparative-analysis': typeof PanelComparativeAnalysisRoute
-  '/panel/devices': typeof PanelDevicesRoute
-  '/auth/': typeof AuthIndexRoute
-  '/panel/': typeof PanelIndexRoute
-  '/panel/settings/external-apps': typeof PanelSettingsExternalAppsRoute
-  '/panel/settings/': typeof PanelSettingsIndexRoute
-}
-export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/recover': typeof AuthRecoverRoute
-  '/auth/register': typeof AuthRegisterRoute
-  '/auth/telegram-confirm-register': typeof AuthTelegramConfirmRegisterRoute
-  '/panel/comparative-analysis': typeof PanelComparativeAnalysisRoute
-  '/panel/devices': typeof PanelDevicesRoute
-  '/auth': typeof AuthIndexRoute
-  '/panel': typeof PanelIndexRoute
-  '/panel/settings/external-apps': typeof PanelSettingsExternalAppsRoute
-  '/panel/settings': typeof PanelSettingsIndexRoute
-}
-export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/auth': typeof AuthRouteRouteWithChildren
-  '/panel': typeof PanelRouteRouteWithChildren
-  '/panel/settings': typeof PanelSettingsRouteRouteWithChildren
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/recover': typeof AuthRecoverRoute
-  '/auth/register': typeof AuthRegisterRoute
-  '/auth/telegram-confirm-register': typeof AuthTelegramConfirmRegisterRoute
-  '/panel/comparative-analysis': typeof PanelComparativeAnalysisRoute
-  '/panel/devices': typeof PanelDevicesRoute
-  '/auth/': typeof AuthIndexRoute
-  '/panel/': typeof PanelIndexRoute
-  '/panel/settings/external-apps': typeof PanelSettingsExternalAppsRoute
-  '/panel/settings/': typeof PanelSettingsIndexRoute
-}
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/auth'
-    | '/panel'
-    | '/panel/settings'
-    | '/auth/login'
-    | '/auth/recover'
-    | '/auth/register'
-    | '/auth/telegram-confirm-register'
-    | '/panel/comparative-analysis'
-    | '/panel/devices'
-    | '/auth/'
-    | '/panel/'
-    | '/panel/settings/external-apps'
-    | '/panel/settings/'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/auth/login'
-    | '/auth/recover'
-    | '/auth/register'
-    | '/auth/telegram-confirm-register'
-    | '/panel/comparative-analysis'
-    | '/panel/devices'
-    | '/auth'
-    | '/panel'
-    | '/panel/settings/external-apps'
-    | '/panel/settings'
-  id:
-    | '__root__'
-    | '/'
-    | '/auth'
-    | '/panel'
-    | '/panel/settings'
-    | '/auth/login'
-    | '/auth/recover'
-    | '/auth/register'
-    | '/auth/telegram-confirm-register'
-    | '/panel/comparative-analysis'
-    | '/panel/devices'
-    | '/auth/'
-    | '/panel/'
-    | '/panel/settings/external-apps'
-    | '/panel/settings/'
-  fileRoutesById: FileRoutesById
-}
-export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AuthRouteRoute: typeof AuthRouteRouteWithChildren
-  PanelRouteRoute: typeof PanelRouteRouteWithChildren
-}
+const PanelSettingsExternalAppsRoute = PanelSettingsExternalAppsImport.update({
+  id: '/external-apps',
+  path: '/external-apps',
+  getParentRoute: () => PanelSettingsRouteRoute,
+} as any)
+
+// Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/panel': {
-      id: '/panel'
-      path: '/panel'
-      fullPath: '/panel'
-      preLoaderRoute: typeof PanelRouteRouteImport
-      parentRoute: typeof rootRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
     }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRoute
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/panel/': {
-      id: '/panel/'
-      path: '/'
-      fullPath: '/panel/'
-      preLoaderRoute: typeof PanelIndexRouteImport
-      parentRoute: typeof PanelRouteRoute
-    }
-    '/auth/': {
-      id: '/auth/'
-      path: '/'
-      fullPath: '/auth/'
-      preLoaderRoute: typeof AuthIndexRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/panel/devices': {
-      id: '/panel/devices'
-      path: '/devices'
-      fullPath: '/panel/devices'
-      preLoaderRoute: typeof PanelDevicesRouteImport
-      parentRoute: typeof PanelRouteRoute
-    }
-    '/panel/comparative-analysis': {
-      id: '/panel/comparative-analysis'
-      path: '/comparative-analysis'
-      fullPath: '/panel/comparative-analysis'
-      preLoaderRoute: typeof PanelComparativeAnalysisRouteImport
-      parentRoute: typeof PanelRouteRoute
-    }
-    '/auth/telegram-confirm-register': {
-      id: '/auth/telegram-confirm-register'
-      path: '/telegram-confirm-register'
-      fullPath: '/auth/telegram-confirm-register'
-      preLoaderRoute: typeof AuthTelegramConfirmRegisterRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/auth/register': {
-      id: '/auth/register'
-      path: '/register'
-      fullPath: '/auth/register'
-      preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/auth/recover': {
-      id: '/auth/recover'
-      path: '/recover'
-      fullPath: '/auth/recover'
-      preLoaderRoute: typeof AuthRecoverRouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/auth/login': {
-      id: '/auth/login'
-      path: '/login'
-      fullPath: '/auth/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof AuthRouteRoute
+    '/panel': {
+      id: '/panel'
+      path: '/panel'
+      fullPath: '/panel'
+      preLoaderRoute: typeof PanelRouteImport
+      parentRoute: typeof rootRoute
     }
     '/panel/settings': {
       id: '/panel/settings'
       path: '/settings'
       fullPath: '/panel/settings'
-      preLoaderRoute: typeof PanelSettingsRouteRouteImport
-      parentRoute: typeof PanelRouteRoute
+      preLoaderRoute: typeof PanelSettingsRouteImport
+      parentRoute: typeof PanelRouteImport
     }
-    '/panel/settings/': {
-      id: '/panel/settings/'
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginImport
+      parentRoute: typeof AuthRouteImport
+    }
+    '/auth/recover': {
+      id: '/auth/recover'
+      path: '/recover'
+      fullPath: '/auth/recover'
+      preLoaderRoute: typeof AuthRecoverImport
+      parentRoute: typeof AuthRouteImport
+    }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterImport
+      parentRoute: typeof AuthRouteImport
+    }
+    '/auth/telegram-confirm-register': {
+      id: '/auth/telegram-confirm-register'
+      path: '/telegram-confirm-register'
+      fullPath: '/auth/telegram-confirm-register'
+      preLoaderRoute: typeof AuthTelegramConfirmRegisterImport
+      parentRoute: typeof AuthRouteImport
+    }
+    '/panel/comparative-analysis': {
+      id: '/panel/comparative-analysis'
+      path: '/comparative-analysis'
+      fullPath: '/panel/comparative-analysis'
+      preLoaderRoute: typeof PanelComparativeAnalysisImport
+      parentRoute: typeof PanelRouteImport
+    }
+    '/panel/devices': {
+      id: '/panel/devices'
+      path: '/devices'
+      fullPath: '/panel/devices'
+      preLoaderRoute: typeof PanelDevicesImport
+      parentRoute: typeof PanelRouteImport
+    }
+    '/auth/': {
+      id: '/auth/'
       path: '/'
-      fullPath: '/panel/settings/'
-      preLoaderRoute: typeof PanelSettingsIndexRouteImport
-      parentRoute: typeof PanelSettingsRouteRoute
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexImport
+      parentRoute: typeof AuthRouteImport
+    }
+    '/panel/': {
+      id: '/panel/'
+      path: '/'
+      fullPath: '/panel/'
+      preLoaderRoute: typeof PanelIndexImport
+      parentRoute: typeof PanelRouteImport
     }
     '/panel/settings/external-apps': {
       id: '/panel/settings/external-apps'
       path: '/external-apps'
       fullPath: '/panel/settings/external-apps'
-      preLoaderRoute: typeof PanelSettingsExternalAppsRouteImport
-      parentRoute: typeof PanelSettingsRouteRoute
+      preLoaderRoute: typeof PanelSettingsExternalAppsImport
+      parentRoute: typeof PanelSettingsRouteImport
+    }
+    '/panel/settings/': {
+      id: '/panel/settings/'
+      path: '/'
+      fullPath: '/panel/settings/'
+      preLoaderRoute: typeof PanelSettingsIndexImport
+      parentRoute: typeof PanelSettingsRouteImport
     }
   }
 }
+
+// Create and export the route tree
 
 interface AuthRouteRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
@@ -352,11 +271,201 @@ const PanelRouteRouteWithChildren = PanelRouteRoute._addFileChildren(
   PanelRouteRouteChildren,
 )
 
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/auth': typeof AuthRouteRouteWithChildren
+  '/panel': typeof PanelRouteRouteWithChildren
+  '/panel/settings': typeof PanelSettingsRouteRouteWithChildren
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/recover': typeof AuthRecoverRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/telegram-confirm-register': typeof AuthTelegramConfirmRegisterRoute
+  '/panel/comparative-analysis': typeof PanelComparativeAnalysisRoute
+  '/panel/devices': typeof PanelDevicesRoute
+  '/auth/': typeof AuthIndexRoute
+  '/panel/': typeof PanelIndexRoute
+  '/panel/settings/external-apps': typeof PanelSettingsExternalAppsRoute
+  '/panel/settings/': typeof PanelSettingsIndexRoute
+}
+
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/recover': typeof AuthRecoverRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/telegram-confirm-register': typeof AuthTelegramConfirmRegisterRoute
+  '/panel/comparative-analysis': typeof PanelComparativeAnalysisRoute
+  '/panel/devices': typeof PanelDevicesRoute
+  '/auth': typeof AuthIndexRoute
+  '/panel': typeof PanelIndexRoute
+  '/panel/settings/external-apps': typeof PanelSettingsExternalAppsRoute
+  '/panel/settings': typeof PanelSettingsIndexRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/': typeof IndexRoute
+  '/auth': typeof AuthRouteRouteWithChildren
+  '/panel': typeof PanelRouteRouteWithChildren
+  '/panel/settings': typeof PanelSettingsRouteRouteWithChildren
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/recover': typeof AuthRecoverRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/telegram-confirm-register': typeof AuthTelegramConfirmRegisterRoute
+  '/panel/comparative-analysis': typeof PanelComparativeAnalysisRoute
+  '/panel/devices': typeof PanelDevicesRoute
+  '/auth/': typeof AuthIndexRoute
+  '/panel/': typeof PanelIndexRoute
+  '/panel/settings/external-apps': typeof PanelSettingsExternalAppsRoute
+  '/panel/settings/': typeof PanelSettingsIndexRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/panel'
+    | '/panel/settings'
+    | '/auth/login'
+    | '/auth/recover'
+    | '/auth/register'
+    | '/auth/telegram-confirm-register'
+    | '/panel/comparative-analysis'
+    | '/panel/devices'
+    | '/auth/'
+    | '/panel/'
+    | '/panel/settings/external-apps'
+    | '/panel/settings/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/auth/login'
+    | '/auth/recover'
+    | '/auth/register'
+    | '/auth/telegram-confirm-register'
+    | '/panel/comparative-analysis'
+    | '/panel/devices'
+    | '/auth'
+    | '/panel'
+    | '/panel/settings/external-apps'
+    | '/panel/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/panel'
+    | '/panel/settings'
+    | '/auth/login'
+    | '/auth/recover'
+    | '/auth/register'
+    | '/auth/telegram-confirm-register'
+    | '/panel/comparative-analysis'
+    | '/panel/devices'
+    | '/auth/'
+    | '/panel/'
+    | '/panel/settings/external-apps'
+    | '/panel/settings/'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  PanelRouteRoute: typeof PanelRouteRouteWithChildren
+}
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   PanelRouteRoute: PanelRouteRouteWithChildren,
 }
-export const routeTree = rootRouteImport
+
+export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+/* ROUTE_MANIFEST_START
+{
+  "routes": {
+    "__root__": {
+      "filePath": "__root.tsx",
+      "children": [
+        "/",
+        "/auth",
+        "/panel"
+      ]
+    },
+    "/": {
+      "filePath": "index.tsx"
+    },
+    "/auth": {
+      "filePath": "auth/route.tsx",
+      "children": [
+        "/auth/login",
+        "/auth/recover",
+        "/auth/register",
+        "/auth/telegram-confirm-register",
+        "/auth/"
+      ]
+    },
+    "/panel": {
+      "filePath": "panel/route.tsx",
+      "children": [
+        "/panel/settings",
+        "/panel/comparative-analysis",
+        "/panel/devices",
+        "/panel/"
+      ]
+    },
+    "/panel/settings": {
+      "filePath": "panel/settings/route.tsx",
+      "parent": "/panel",
+      "children": [
+        "/panel/settings/external-apps",
+        "/panel/settings/"
+      ]
+    },
+    "/auth/login": {
+      "filePath": "auth/login.ts",
+      "parent": "/auth"
+    },
+    "/auth/recover": {
+      "filePath": "auth/recover.ts",
+      "parent": "/auth"
+    },
+    "/auth/register": {
+      "filePath": "auth/register.ts",
+      "parent": "/auth"
+    },
+    "/auth/telegram-confirm-register": {
+      "filePath": "auth/telegram-confirm-register.ts",
+      "parent": "/auth"
+    },
+    "/panel/comparative-analysis": {
+      "filePath": "panel/comparative-analysis.tsx",
+      "parent": "/panel"
+    },
+    "/panel/devices": {
+      "filePath": "panel/devices.tsx",
+      "parent": "/panel"
+    },
+    "/auth/": {
+      "filePath": "auth/index.tsx",
+      "parent": "/auth"
+    },
+    "/panel/": {
+      "filePath": "panel/index.tsx",
+      "parent": "/panel"
+    },
+    "/panel/settings/external-apps": {
+      "filePath": "panel/settings/external-apps.tsx",
+      "parent": "/panel/settings"
+    },
+    "/panel/settings/": {
+      "filePath": "panel/settings/index.tsx",
+      "parent": "/panel/settings"
+    }
+  }
+}
+ROUTE_MANIFEST_END */

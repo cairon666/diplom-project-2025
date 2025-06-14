@@ -15,3 +15,5 @@ dist/
 *.scss.d.ts
 
 coverage/
+
+.tanstack/

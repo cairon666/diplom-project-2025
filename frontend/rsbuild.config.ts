@@ -1,14 +1,14 @@
-import { defineConfig } from '@rsbuild/core';
+import { defineConfig, RsbuildConfig } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginSass } from '@rsbuild/plugin-sass';
 import { pluginTypedCSSModules } from '@rsbuild/plugin-typed-css-modules';
-import TailwindPostcss from '@tailwindcss/postcss';
 import { TanStackRouterRspack } from '@tanstack/router-plugin/rspack';
+import path from 'path';
 
-export default defineConfig({
+const config: RsbuildConfig = defineConfig({
     plugins: [pluginReact(), pluginSass(), pluginTypedCSSModules()],
     html: {
-        template: './src/index.html',
+        template: path.resolve(__dirname, 'src/index.html'),
     },
     resolve: {
         alias: {
@@ -26,16 +26,11 @@ export default defineConfig({
         },
     },
     tools: {
-        postcss: {
-            postcssOptions: {
-                plugins: [TailwindPostcss()],
-            },
-        },
         rspack: {
             plugins: [
                 TanStackRouterRspack({
                     target: 'react',
-                    autoCodeSplitting: false,
+                    autoCodeSplitting: true,
                     routesDirectory: './src/app/routes',
                     generatedRouteTree: './src/app/routeTree.gen.ts',
                 }),
@@ -43,3 +38,5 @@ export default defineConfig({
         },
     },
 });
+
+export default config;
