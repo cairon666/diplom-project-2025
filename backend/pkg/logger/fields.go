@@ -1,71 +1,83 @@
 package logger
 
 import (
+	"log/slog"
 	"time"
-
-	"go.uber.org/zap"
 )
 
 func String(key string, val string) Field {
-	return zap.String(key, val)
+	return slog.String(key, val)
 }
 
 func Int(key string, val int) Field {
-	return zap.Int(key, val)
+	return slog.Int(key, val)
 }
 
 func Int32(key string, val int32) Field {
-	return zap.Int32(key, val)
+	return slog.Int(key, int(val))
 }
 
 func Int64(key string, val int64) Field {
-	return zap.Int64(key, val)
+	return slog.Int64(key, val)
 }
 
 func Float32(key string, val float32) Field {
-	return zap.Float32(key, val)
+	return slog.Float64(key, float64(val))
 }
 
 func Float64(key string, val float64) Field {
-	return zap.Float64(key, val)
+	return slog.Float64(key, val)
 }
 
 func Bool(key string, val bool) Field {
-	return zap.Bool(key, val)
+	return slog.Bool(key, val)
 }
 
 func Error(err error) Field {
-	return zap.Error(err)
+	return slog.Any("error", err)
 }
 
 func Stack() Field {
-	return zap.Stack("stack")
+	return slog.String("stack", "stack trace not implemented")
 }
 
 func Message(msg string) Field {
-	return zap.String("message", msg)
+	return slog.String("message", msg)
 }
 
 func Duration(key string, val time.Duration) Field {
-	return zap.Duration(key, val)
+	return slog.Duration(key, val)
 }
 
 func Durationp(key string, val *time.Duration) Field {
-	return zap.Durationp(key, val)
+	if val == nil {
+		return slog.Any(key, nil)
+	}
+
+	return slog.Duration(key, *val)
 }
 
 func Dict(key string, val ...Field) Field {
-	return zap.Dict(key, val...)
+	attrs := make([]any, len(val))
+	for i, v := range val {
+		attrs[i] = v
+	}
+
+	return slog.Group(key, attrs...)
 }
 
 func Time(key string, val time.Time) Field {
-	return zap.Time(key, val)
+	return slog.Time(key, val)
 }
 
 func Timep(key string, val *time.Time) Field {
-	return zap.Timep(key, val)
+	if val == nil {
+		return slog.Any(key, nil)
+	}
+
+	return slog.Time(key, *val)
 }
 
 func Any(key string, val interface{}) Field {
-	return zap.Any(key, val)
+	return slog.Any(key, val)
 }

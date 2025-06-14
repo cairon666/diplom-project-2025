@@ -2,88 +2,93 @@ package logger
 
 import (
 	"context"
+	"log/slog"
 	"os"
 	"path/filepath"
-
-	"go.uber.org/zap"
 )
 
 type Logger struct {
-	l *zap.Logger
+	l *slog.Logger
 }
 
-type Field = zap.Field
+const logFilePermissions = 0666
 
-func NewProd() (*Logger, error) {
-	cwd, err := os.Getwd()
+func NewProd(path string) (*Logger, error) {
+	// Создаем файл для логов
+	logFile, err := os.OpenFile(filepath.Clean(path), os.O_CREATE|os.O_WRONLY|os.O_APPEND, logFilePermissions)
 	if err != nil {
-		return nil, err
+		// Если не можем создать файл, используем stdout
+		logFile = os.Stdout
 	}
 
-	conf := zap.Config{
-		Level:       zap.NewAtomicLevelAt(zap.InfoLevel),
-		Development: false,
-		Sampling: &zap.SamplingConfig{
-			Initial:    100,
-			Thereafter: 100,
-		},
-		Encoding:         "json",
-		EncoderConfig:    zap.NewProductionEncoderConfig(),
-		OutputPaths:      []string{filepath.Join(cwd, "/logs/all.log")},
-		ErrorOutputPaths: []string{filepath.Join(cwd, "/logs/err.log")},
-	}
-	l, err := conf.Build(zap.AddCallerSkip(1))
+	// Создаем JSON handler для продакшена
+	handler := slog.NewJSONHandler(logFile, &slog.HandlerOptions{
+		Level:     slog.LevelInfo,
+		AddSource: true,
+	})
+
+	l := slog.New(handler)
 
 	return &Logger{
 		l: l,
-	}, err
+	}, nil
 }
 
 func NewDev() (*Logger, error) {
-	conf := zap.Config{
-		Level:            zap.NewAtomicLevelAt(zap.DebugLevel),
-		Development:      true,
-		Encoding:         "console",
-		EncoderConfig:    zap.NewDevelopmentEncoderConfig(),
-		OutputPaths:      []string{"stderr"},
-		ErrorOutputPaths: []string{"stderr"},
-	}
-	l, err := conf.Build(zap.AddCallerSkip(1))
+	// Создаем текстовый handler для разработки
+	handler := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		Level:     slog.LevelDebug,
+		AddSource: true,
+	})
+
+	l := slog.New(handler)
 
 	return &Logger{
 		l: l,
-	}, err
+	}, nil
+}
+
+// convertFields конвертирует []Field в []any для совместимости с slog.
+func convertFields(fields []Field) []any {
+	result := make([]any, len(fields))
+	for i, field := range fields {
+		result[i] = field
+	}
+
+	return result
 }
 
 // Основные методы логирования.
 func (l *Logger) Info(msg string, fields ...Field) {
-	l.l.Info(msg, fields...)
+	l.l.Info(msg, convertFields(fields)...)
 }
 
 func (l *Logger) Error(msg string, fields ...Field) {
-	l.l.Error(msg, fields...)
+	l.l.Error(msg, convertFields(fields)...)
 }
 
 func (l *Logger) Debug(msg string, fields ...Field) {
-	l.l.Debug(msg, fields...)
+	l.l.Debug(msg, convertFields(fields)...)
 }
 
 func (l *Logger) Warn(msg string, fields ...Field) {
-	l.l.Warn(msg, fields...)
+	l.l.Warn(msg, convertFields(fields)...)
 }
 
 func (l *Logger) Fatal(msg string, fields ...Field) {
-	l.l.Fatal(msg, fields...)
+	l.l.Error(msg, convertFields(fields)...)
+	os.Exit(1)
 }
 
 func (l *Logger) Panic(msg string, fields ...Field) {
-	l.l.Panic(msg, fields...)
+	l.l.Error(msg, convertFields(fields)...)
+	panic(msg)
 }
 
 // Методы для работы с полями и контекстом.
 func (l *Logger) With(fields ...Field) ILogger {
 	return &Logger{
-		l: l.l.With(fields...),
+		l: l.l.With(convertFields(fields)...),
 	}
 }
 
@@ -95,19 +100,19 @@ func (l *Logger) WithContext(ctx context.Context) ILogger {
 
 // InfoContext Методы для работы с контекстом.
 func (l *Logger) InfoContext(ctx context.Context, msg string, fields ...Field) {
-	l.l.Info(msg, fields...)
+	l.l.InfoContext(ctx, msg, convertFields(fields)...)
 }
 
 func (l *Logger) ErrorContext(ctx context.Context, msg string, fields ...Field) {
-	l.l.Error(msg, fields...)
+	l.l.ErrorContext(ctx, msg, convertFields(fields)...)
 }
 
 func (l *Logger) DebugContext(ctx context.Context, msg string, fields ...Field) {
-	l.l.Debug(msg, fields...)
+	l.l.DebugContext(ctx, msg, convertFields(fields)...)
 }
 
 func (l *Logger) WarnContext(ctx context.Context, msg string, fields ...Field) {
-	l.l.Warn(msg, fields...)
+	l.l.WarnContext(ctx, msg, convertFields(fields)...)
 }
 
 // Убеждаемся, что Logger реализует все интерфейсы.
