@@ -43,11 +43,11 @@ func NewHTTPServer(lc fx.Lifecycle, config *config.Config, handler http.Handler)
 
 	return srv
 }
-func NewServeMux(routers []Router, logger logger.ILogger) http.Handler {
+func NewServeMux(routers []Router, log logger.ILogger) http.Handler {
 	router := gin.New()
 
 	router.Use(
-		CustomLogger(logger),
+		logger.GinMiddleware(log),
 		gin.Recovery(),
 	)
 
@@ -56,21 +56,4 @@ func NewServeMux(routers []Router, logger logger.ILogger) http.Handler {
 	}
 
 	return router.Handler()
-}
-
-func CustomLogger(log logger.ILogger) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		start := time.Now()
-
-		c.Next()
-
-		latency := time.Since(start)
-		status := c.Writer.Status()
-		log.Info("WWW",
-			logger.String("method", c.Request.Method),
-			logger.String("path", c.Request.URL.Path),
-			logger.Int("status", status),
-			logger.String("latency", latency.String()),
-		)
-	}
 }

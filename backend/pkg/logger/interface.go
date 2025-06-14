@@ -2,7 +2,11 @@ package logger
 
 import (
 	"context"
+	"log/slog"
 )
+
+// Field представляет поле для структурированного логирования.
+type Field = slog.Attr
 
 // ILogger определяет интерфейс для логирования.
 type ILogger interface {

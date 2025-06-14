@@ -190,7 +190,7 @@ func NewLogger(conf *config.Config) (logger.ILogger, error) {
 		return logger.NewDev()
 	}
 
-	return logger.NewProd()
+	return logger.NewProd(conf.Log.Out) //nolint:wrapcheck
 }
 
 func NewRedisClient(lc fx.Lifecycle, conf *config.Config) (*redis.Client, error) {
